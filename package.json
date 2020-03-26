@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/GuacLive/Guac-Media-Server#readme",
   "dependencies": {
-    "axios": "0.19.0",
+    "axios": "^0.19.2",
     "basic-auth-connect": "^1.0.0",
     "chalk": "^3.0.0",
     "dateformat": "^3.0.3",
