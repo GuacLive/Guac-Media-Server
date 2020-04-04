@@ -29,7 +29,7 @@ const config = {
   },
   misc: {
     api_endpoint: conf.endpoint,
-    api_key: conf.api_key,
+    api_secret: conf.api_secret,
     ignore_auth: !!IS_DEBUG,
     maxDataRate: conf.maxDataRate || 8000,
     dataRateCheckInterval: conf.dataRateCheckInterval || 3,
