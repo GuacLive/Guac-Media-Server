@@ -6,7 +6,7 @@ const helpers = require('./utils/helpers');
 const Logger = require('../node_core_logger');
 const conf = require('./config');
 
-const IS_DEBUG = process.env.NODE_ENV === 'development';
+const IS_DEBUG = false;//process.env.NODE_ENV === 'development';
 
 const config = {
   logType: IS_DEBUG ? 4 : 2,
