@@ -67,8 +67,10 @@ const auth = (data, callback) => {
                 }
             })
         .then(response => {
+            console.info('Response from auth', response);
             callback();
         }).catch(error => {
+            console.error(error);
             Logger.log(`[rtmp publish] Unauthorized. id=${data.id} streamPath=${data.publishStreamPath} streamId=${data.publishStreamId} token=${data.publishArgs.token} `);
             data.sendStatusMessage(data.publishStreamId, 'error', 'NetStream.publish.Unauthorized', 'Authorization required.');
         });
