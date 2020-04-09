@@ -78,13 +78,14 @@ const auth = (data, callback) => {
 
 const generateStreamThumbnail = (streamPath) => {
     const args = [
-        '-y',
-        '-i', `http://127.0.0.1:${config.http_port || 80}${streamPath}/index.m3u8`,
-        '-ss', '00:00:01',
-        '-f', 'image2',
-        '-vframes', '1',
+        '-i', `media${streamPath}/index.m3u8`,
         '-vcodec' ,'png',
-        '-vf', 'scale=-2:300',
+        '-frames:v', '2',
+        '-an',
+        '-f', 'rawvideo',
+        //'-vf', 'scale=-2:300', // see if disabling scaling reduces CPU
+        '-ss', '00:00:01',
+        '-y',
         `media${streamPath}/thumbnail.png`,
     ];
 
@@ -101,12 +102,13 @@ const generateStreamThumbnail = (streamPath) => {
     inst.unref();
 };
 
-let removeStreamThumbnail = (streamPath) => {
+const removeStreamThumbnail = (streamPath) => {
     let path = `media${streamPath}/thumbnail.png`;
     fs.unlink(path, (error) => {
         if(error) Logger.log('[Thumbnail removal] screenshot', error)
     })
-}
+};
+
 module.exports = {
     router,
     auth,
