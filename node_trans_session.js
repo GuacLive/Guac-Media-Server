@@ -13,10 +13,13 @@ const dateFormat = require('dateformat');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 
+const { extractProgress } = require('./misc/utils/helpers');
+
 class NodeTransSession extends EventEmitter {
   constructor(conf) {
     super();
     this.conf = conf;
+    this.data = {};
   }
 
   run() {
@@ -91,6 +94,7 @@ class NodeTransSession extends EventEmitter {
     });
 
     this.ffmpeg_exec.stderr.on('data', (data) => {
+      extractProgress(this, data.toString());
       Logger.ffdebug(`FF输出：${data}`);
     });
 

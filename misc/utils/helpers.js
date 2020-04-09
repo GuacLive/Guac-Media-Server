@@ -109,9 +109,48 @@ const removeStreamThumbnail = (streamPath) => {
     })
 };
 
+const parseProgressLine = (line) => {
+    var progress = {};
+
+    // Remove all spaces after = and trim
+    line = line.replace(/=\s+/g, '=').trim();
+    var progressParts = line.split(' ');
+
+    // Split every progress part by "=" to get key and value
+    for (var i = 0; i < progressParts.length; i++) {
+        var progressSplit = progressParts[i].split('=', 2);
+        var key = progressSplit[0];
+        var value = progressSplit[1];
+
+        // This is not a progress line
+        if (typeof value === 'undefined')
+            return null;
+
+        progress[key] = value;
+    }
+
+    return progress;
+};
+const extractProgress = (command, stderrLine) => {
+    var progress = parseProgressLine(stderrLine);
+
+    if (progress) {
+        // build progress report object
+        var ret = {
+            frames: parseInt(progress.frame, 10),
+            currentFps: parseInt(progress.fps, 10),
+            currentKbps: progress.bitrate ? parseFloat(progress.bitrate.replace('kbits/s', '')) : 0,
+            targetSize: parseInt(progress.size || progress.Lsize, 10),
+            timemark: progress.time
+        };
+        command.emit('progress', ret);
+    }
+};
+
 module.exports = {
     router,
     auth,
     generateStreamThumbnail,
-    removeStreamThumbnail
+    removeStreamThumbnail,
+    extractProgress
 };

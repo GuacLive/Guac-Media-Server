@@ -63,7 +63,8 @@ class NodeTransServer {
   onPostPublish(id, streamPath, args) {
     let regRes = /\/(.*)\/(.*)/gi.exec(streamPath);
     let [app, name] = _.slice(regRes, 1);
-    let i = this.config.trans.tasks.length;
+    let i = this.config.trans.tasks && this.config.trans.tasks.length
+      ? this.config.trans.tasks.length : 0;
     while (i--) {
       let conf = this.config.trans.tasks[i];
       conf.ffmpeg = this.config.trans.ffmpeg;
@@ -76,10 +77,23 @@ class NodeTransServer {
       conf.streamName = name;
       conf.args = args;
       if (app === conf.app) {
+        let taskId = `${app}_${conf.name || 'index'}_${id}`;
         let session = new NodeTransSession(conf);
-        this.transSessions.set(id, session);
+        this.transSessions.set(taskId, session);
+        session.on('progress', progress => {
+          let data = {
+            frames: progress.frames,
+            fps: progress.currentFps,
+            bitRate: progress.currentKbps,
+            time: progress.timemark,
+          };
+          console.log('progress', data, taskId);
+          if (this.transSessions.get(taskId)) {
+            this.transSessions.get(taskId).data = data;
+          }
+        });
         session.on('end', () => {
-          this.transSessions.delete(id);
+          this.transSessions.delete(taskId);
         });
         session.run();
       }
@@ -87,9 +101,20 @@ class NodeTransServer {
   }
 
   onDonePublish(id, streamPath, args) {
-    let session = this.transSessions.get(id);
-    if (session) {
-      session.end();
+    let regRes = /\/(.*)\/(.*)/gi.exec(streamPath);
+    let [app, name] = _.slice(regRes, 1);
+    let i = this.config.trans.tasks && this.config.trans.tasks.length
+      ? this.config.trans.tasks.length : 0;
+    while (i--) {
+      let conf = this.config.trans.tasks[i];
+      if (app === conf.app) {
+        let taskId = `${app}_${conf.name || 'index'}_${id}`;
+        console.log('onDonePublish', taskId);
+        let session = this.transSessions.get(taskId);
+        if (session) {
+          session.end();
+        }
+      }
     }
   }
 }
