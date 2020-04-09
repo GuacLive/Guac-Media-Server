@@ -41,7 +41,8 @@ class NodeTransServer {
       return;
     }
 
-    let i = this.config.trans.tasks.length;
+    let i = this.config.trans.tasks && this.config.trans.tasks.length
+      ? this.config.trans.tasks.length : 0;
     let apps = '';
     while (i--) {
       apps += this.config.trans.tasks[i].app;
