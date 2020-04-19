@@ -25,11 +25,11 @@
   "dependencies": {
     "axios": "^0.19.2",
     "basic-auth-connect": "^1.0.0",
-    "chalk": "^3.0.0",
+    "chalk": "^4.0.0",
     "dateformat": "^3.0.3",
     "express": "^5.0.0-alpha.7",
     "lodash": ">=4.17.13",
-    "mkdirp": "^1.0.3",
+    "mkdirp": "1.0.4",
     "node-cron": "^2.0.3",
     "ws": "^7.0.0"
   },
