@@ -195,7 +195,6 @@ class NodeRelayServer {
         conf.ouPath = conf.appendName === false ? conf.edge : (hasApp ? `${conf.edge}/${stream}` : `${conf.edge}${streamPath}`);
         let session = new NodeRelaySession(conf);
         session.id = id;
-    let id = NodeCoreUtils.generateNewSessionID();
         session.on('end', (id) => {
           let list = this.dynamicSessions.get(id);
           if (list.indexOf(session) > -1) {
