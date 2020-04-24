@@ -665,7 +665,7 @@ class NodeRtmpSession {
     }
 
     const timestamp = this.parserPacket.clock;
-    const length = packet.payload.length;
+    const length = payload.length;
     let packet = RtmpPacket.create();
     packet.header.fmt = RTMP_CHUNK_TYPE_0;
     packet.header.cid = RTMP_CHANNEL_AUDIO;
@@ -718,7 +718,9 @@ class NodeRtmpSession {
   }
 
   rtmpVideoHandler() {
-    let payload = this.parserPacket.payload.slice(0, this.parserPacket.header.length);
+    const length = this.parserPacket.header.length;
+
+    let payload = this.parserPacket.payload.slice(0, length);
     let frame_type = (payload[0] >> 4) & 0x0f;
     let codec_id = payload[0] & 0x0f;
 
@@ -749,7 +751,6 @@ class NodeRtmpSession {
     }
 
     const timestamp = this.parserPacket.clock;
-    const length = packet.payload.length;
     let packet = RtmpPacket.create();
     packet.header.fmt = RTMP_CHUNK_TYPE_0;
     packet.header.cid = RTMP_CHANNEL_VIDEO;
@@ -809,6 +810,12 @@ class NodeRtmpSession {
     let offset = this.parserPacket.header.type === RTMP_TYPE_FLEX_STREAM ? 1 : 0;
     let payload = this.parserPacket.payload.slice(offset, this.parserPacket.header.length);
     let dataMessage = AMF.decodeAmf0Data(payload);
+    
+    // Emit an event for the data.
+    const timestamp = this.parserPacket.clock;
+    const length = payload.length;
+    context.nodeEvent.emit('data', this.id, {payload, dataMessage, timestamp, length});
+
     switch (dataMessage.cmd) {
       case "@setDataFrame":
         if (dataMessage.dataObj) {
@@ -826,17 +833,12 @@ class NodeRtmpSession {
         };
         this.metaData = AMF.encodeAmf0Data(opt);
 
-        const timestamp = this.parserPacket.clock;
-        const length = packet.payload.length;
         let packet = RtmpPacket.create();
         packet.header.fmt = RTMP_CHUNK_TYPE_0;
         packet.header.cid = RTMP_CHANNEL_DATA;
         packet.header.type = RTMP_TYPE_DATA;
         packet.payload = this.metaData;
         packet.header.length = length;
-
-        // Emit an event for the data.
-        context.nodeEvent.emit('data', this.id, {payload, timestamp, length});
 
         let rtmpChunks = this.rtmpChunksCreate(packet);
         let flvTag = NodeFlvSession.createFlvTag(packet);
