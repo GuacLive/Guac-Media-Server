@@ -664,13 +664,19 @@ class NodeRtmpSession {
       );
     }
 
+    const timestamp = this.parserPacket.clock;
+    const length = packet.payload.length;
     let packet = RtmpPacket.create();
     packet.header.fmt = RTMP_CHUNK_TYPE_0;
     packet.header.cid = RTMP_CHANNEL_AUDIO;
     packet.header.type = RTMP_TYPE_AUDIO;
     packet.payload = payload;
-    packet.header.length = packet.payload.length;
-    packet.header.timestamp = this.parserPacket.clock;
+    packet.header.length = length;
+    packet.header.timestamp = timestamp;
+
+    // Emit an event for the audio.
+    context.nodeEvent.emit('audio', this.id, {payload, timestamp, length});
+
     let rtmpChunks = this.rtmpChunksCreate(packet);
     let flvTag = NodeFlvSession.createFlvTag(packet);
 
@@ -742,15 +748,20 @@ class NodeRtmpSession {
       );
     }
 
+    const timestamp = this.parserPacket.clock;
+    const length = packet.payload.length;
     let packet = RtmpPacket.create();
     packet.header.fmt = RTMP_CHUNK_TYPE_0;
     packet.header.cid = RTMP_CHANNEL_VIDEO;
     packet.header.type = RTMP_TYPE_VIDEO;
     packet.payload = payload;
-    packet.header.length = packet.payload.length;
-    packet.header.timestamp = this.parserPacket.clock;
+    packet.header.length = length;
+    packet.header.timestamp = timestamp;
     let rtmpChunks = this.rtmpChunksCreate(packet);
     let flvTag = NodeFlvSession.createFlvTag(packet);
+
+    // Emit an event for the video.
+    context.nodeEvent.emit('video', this.id, {payload, timestamp, length});
 
     //cache gop
     if ((codec_id == 7 || codec_id == 12) && this.rtmpGopCacheQueue != null) {
@@ -815,12 +826,18 @@ class NodeRtmpSession {
         };
         this.metaData = AMF.encodeAmf0Data(opt);
 
+        const timestamp = this.parserPacket.clock;
+        const length = packet.payload.length;
         let packet = RtmpPacket.create();
         packet.header.fmt = RTMP_CHUNK_TYPE_0;
         packet.header.cid = RTMP_CHANNEL_DATA;
         packet.header.type = RTMP_TYPE_DATA;
         packet.payload = this.metaData;
-        packet.header.length = packet.payload.length;
+        packet.header.length = length;
+
+        // Emit an event for the data.
+        context.nodeEvent.emit('data', this.id, {payload, timestamp, length});
+
         let rtmpChunks = this.rtmpChunksCreate(packet);
         let flvTag = NodeFlvSession.createFlvTag(packet);
 
