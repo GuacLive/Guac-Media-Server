@@ -36,6 +36,7 @@ You should check the misc/config.sample.js and misc/index.js files for usage.
 - [Fix memory api typos](https://github.com/GuacLive/Guac-Media-Server/commit/98d4c08)
 - [Regularly check bitrate](https://github.com/GuacLive/Guac-Media-Server/commit/7908799)
 - [Option for en/disabling the API in the config](https://github.com/GuacLive/Guac-Media-Server/commit/21af5e4)
+- [Add events for video, audio, and data](https://github.com/GuacLive/Guac-Media-Server/commit/33dee95a6e2e92f03e058b2acf4c25a261174cd9)
 - [add more opt](https://github.com/GuacLive/Guac-Media-Server/commit/613d524)
 > and probably more that i forgot about
 
