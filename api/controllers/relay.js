@@ -33,6 +33,17 @@ function getStreams(req, res, next) {
   res.json(stats);
 }
 
+function deleteStream(req, res, next) {
+  let id = req.body.id;
+
+  if (id) {
+    this.nodeEvent.emit('relayDelete', id);
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(400);
+  }
+}
+
 function pullStream(req, res, next) {
   let url = req.body.url;
   let app = req.body.app;
@@ -59,6 +70,7 @@ function pushStream(req, res, next) {
 
 module.exports = {
   getStreams,
+  deleteStream,
   pullStream,
   pushStream
 };
