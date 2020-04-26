@@ -139,6 +139,7 @@ class NodeRelayServer {
     
     if (session) {
       session.end();
+      context.sessions.delete(id)
       Logger.log('[Relay dynamic session] end', id);
     }
   }
