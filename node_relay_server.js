@@ -72,7 +72,7 @@ class NodeRelayServer {
         });
         this.staticSessions.set(i, session);
         session.run();
-        Logger.log('[Relay static pull] start', id, conf.inPath, ' to ', conf.ouPath);
+        Logger.log('[Relay static pull] start', i, conf.inPath, ' to ', conf.ouPath);
       }
     }
   }
