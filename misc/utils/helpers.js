@@ -159,7 +159,7 @@ const ABRTemplate = (name, transcodeEnabled = false) => {
         line += `#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1400000,RESOLUTION=842x480,VIDEO="medium"\n./../../live/${name}/index_medium.m3u8\n`;
         line += `#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=2800000,RESOLUTION=1280x720,VIDEO="high"\n./../../live/${name}/index_high.m3u8\n`;
     }
-    line += `#EXT-X-STREAM-INF::PROGRAM-ID=1,BANDWIDTH=5000000,RESOLUTION=1920x1080,VIDEO="src"\n./../../live/${name}/index.m3u8`;
+    line += `#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=5000000,RESOLUTION=1920x1080,VIDEO="src"\n./../../live/${name}/index.m3u8`;
     return line;
 };
 
