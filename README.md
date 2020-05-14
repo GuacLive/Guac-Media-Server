@@ -20,6 +20,7 @@ You should check the misc/config.sample.js and misc/index.js files for usage.
 - Archiving of streams (Uploading VOD to Amazon S3-compatible services)
 - Metadata hooks (bitrate, resolution, publisher etc.)
 - Support for running the server in PM2 (single-instance only)
+- [Create ABR (Adaptive Bitrate) playlist (abr.m3u8)](https://github.com/GuacLive/Guac-Media-Server/commit/1e8c52fc1fb7401420909048c5ef9bc4bd85bed1)
 
 ## Fixes
 - [added a catch for an out of range buffer](https://github.com/GuacLive/Guac-Media-Server/commit/aa39f95)
