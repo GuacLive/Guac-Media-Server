@@ -1,6 +1,10 @@
 const spawn = require('child_process').spawn;
 
 const axios = require('axios');
+
+const fs = require('fs');
+const mkdirp = require('mkdirp');
+
 const Logger = require('../../node_core_logger');
 
 const config = require('../config');
@@ -147,10 +151,45 @@ const extractProgress = (command, stderrLine) => {
     }
 };
 
+const ABRTemplate = (name, transcodeEnabled = false) => {
+    let line = `#EXTM3U\n#EXT-X-VERSION:4\n`;
+    line += `#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="src",NAME="src",DEFAULT=YES,AUTOSELECT=YES,LANGUAGE="en"\n`;
+    if (transcodeEnabled) {
+        line += `#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=800000,RESOLUTION=640x360,VIDEO="low"\n./../../live/${name}/index_low.m3u8\n`;
+        line += `#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1400000,RESOLUTION=842x480,VIDEO="medium"\n./../../live/${name}/index_medium.m3u8\n`;
+        line += `#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=2800000,RESOLUTION=1280x720,VIDEO="high"\n./../../live/${name}/index_high.m3u8\n`;
+    }
+    line += `#EXT-X-STREAM-INF::PROGRAM-ID=1,BANDWIDTH=5000000,RESOLUTION=1920x1080,VIDEO="src"\n./../../live/${name}/index.m3u8`;
+    return line;
+};
+
+const makeABRPlaylist = (ouPath, name, transcodeEnabled) => {
+    return new Promise((resolve, reject) => {
+        const playlist = `${ouPath}/abr.m3u8`;
+        fs.open(playlist, 'w', (err, fd) => {
+            if (err) {
+                reject(err.message);
+            } else {
+                fs.writeFile(fd, ABRTemplate(name, transcodeEnabled), errWrite => {
+                    if (errWrite) {
+                        reject(errWrite.message);
+                        return;
+                    } else {
+                        fs.close(fd, () => {
+                            resolve();
+                        });
+                    }
+                });
+            }
+        });
+    });
+};
+
 module.exports = {
     router,
     auth,
     generateStreamThumbnail,
     removeStreamThumbnail,
-    extractProgress
+    extractProgress,
+    makeABRPlaylist
 };

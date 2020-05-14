@@ -12,6 +12,8 @@ const fs = require('fs');
 const _ = require('lodash');
 const mkdirp = require('mkdirp');
 
+const makeABRPlaylist = require('./misc/utils/helpers').makeABRPlaylist;
+
 class NodeTransServer {
   constructor(config) {
     this.config = config;
@@ -65,6 +67,11 @@ class NodeTransServer {
     let [app, name] = _.slice(regRes, 1);
     let i = this.config.trans.tasks && this.config.trans.tasks.length
       ? this.config.trans.tasks.length : 0;
+    
+    // Create ABR (adaptive bitrate) playlist
+    let ouPath = `${this.config.http.mediaroot}/${app}/${name}`;
+    makeABRPlaylist(ouPath, name, this.config.misc.transcode);
+    // Start transcoding sessions
     while (i--) {
       let conf = this.config.trans.tasks[i];
       conf.ffmpeg = this.config.trans.ffmpeg;
