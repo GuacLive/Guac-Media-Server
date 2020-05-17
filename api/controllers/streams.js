@@ -26,7 +26,7 @@ function getStreams(req, res, next) {
             clientId: session.id,
             connectCreated: session.connectTime,
             bytes: session.socket.bytesRead,
-            ip: session.socket.remoteAddress,
+            ip: session.ip || session.socket.remoteAddress,
             audio: session.audioCodec > 0 ? {
               codec: session.audioCodecName,
               profile: session.audioProfileName,
@@ -54,7 +54,7 @@ function getStreams(req, res, next) {
                 clientId: session.id,
                 connectCreated: session.connectTime,
                 bytes: session.socket.bytesWritten,
-                ip: session.socket.remoteAddress,
+                ip: session.ip || session.socket.remoteAddress,
                 protocol: 'rtmp'
               });
 
@@ -67,7 +67,7 @@ function getStreams(req, res, next) {
                 clientId: session.id,
                 connectCreated: session.connectTime,
                 bytes: session.req.connection.bytesWritten,
-                ip: session.req.connection.remoteAddress,
+                ip: session.ip || session.req.connection.remoteAddress,
                 protocol: session.TAG === 'websocket-flv' ? 'ws' : 'http'
               });
 

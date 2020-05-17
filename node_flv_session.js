@@ -28,7 +28,7 @@ class NodeFlvSession {
     this.req = req;
     this.res = res;
     this.id = NodeCoreUtils.generateNewSessionID();
-    this.ip = this.req.socket.remoteAddress;
+    this.ip = this.req.headers['x-forwarded-for'] || this.req.socket.remoteAddress;
 
     this.playStreamPath = "";
     this.playArgs = null;
