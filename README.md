@@ -91,9 +91,9 @@ docker run --name nms -d -p 1935:1935 -p 8000:8000 illuspas/node-media-server
 ```bash
 mkdir nms
 cd nms
-git clone https://github.com/illuspas/Node-Media-Server
-npm i
-node app.js
+git clone https://github.com/GuacLive/Guac-Media-Server
+yarn
+npm start
 ```
 
 ## npm version (recommended)
