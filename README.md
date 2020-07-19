@@ -628,7 +628,7 @@ const config = {
       {
         app: 'live',
         mp4: true,
-        mp4Flags: '[movflags=faststart]',
+        mp4Flags: '[movflags=frag_keyframe+empty_moov]',
       }
     ]
   }
