@@ -58,7 +58,7 @@ class NodeTransServer {
   stop() {
     this.transSessions.forEach((session, id) => {
       session.end();
-      // this.transSessions.delete(id);
+      this.transSessions.delete(id);
     });
   }
 
