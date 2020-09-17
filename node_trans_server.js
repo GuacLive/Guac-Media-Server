@@ -73,7 +73,7 @@ class NodeTransServer {
     makeABRPlaylist(ouPath, name, this.config.misc.transcode);
     // Start transcoding sessions
     while (i--) {
-      let conf = this.config.trans.tasks[i];
+      let conf = { ...this.config.trans.tasks[i] };
       conf.ffmpeg = this.config.trans.ffmpeg;
       conf.analyzeDuration = this.config.trans.analyzeDuration;
       conf.probeSize = this.config.trans.probeSize;
