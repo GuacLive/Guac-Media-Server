@@ -39,7 +39,8 @@ function getStreams(req, res, next) {
               height: session.videoHeight,
               profile: session.videoProfileName,
               level: session.videoLevel,
-              fps: session.videoFps
+              fps: session.videoFps,
+              bitRate: session.data ? session.data.bitRate : null
             } : null,
           },Object);
 
