@@ -5,6 +5,7 @@
 //
 const EventEmitter = require('events');
 
+let transSessions = new Map();
 let sessions = new Map();
 let publishers = new Map();
 let idlePlayers = new Set();
@@ -14,4 +15,4 @@ let stat = {
   outbytes: 0,
   accepted: 0
 };
-module.exports = { sessions, publishers, idlePlayers, nodeEvent, stat };
+module.exports = { transSessions, sessions, publishers, idlePlayers, nodeEvent, stat };

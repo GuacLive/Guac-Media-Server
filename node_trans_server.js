@@ -14,10 +14,11 @@ const mkdirp = require('mkdirp');
 
 const makeABRPlaylist = require('./misc/utils/helpers').makeABRPlaylist;
 
+const transcodeTasks = require('./misc/utils/transcode').tasks;
 class NodeTransServer {
   constructor(config) {
     this.config = config;
-    this.transSessions = new Map();
+    if(context.transSessions !== 'object') context.transSessions = new Map();
   }
 
   async run() {
@@ -50,16 +51,80 @@ class NodeTransServer {
       apps += this.config.trans.tasks[i].app;
       apps += ' ';
     }
+    context.nodeEvent.on('transAdd', this.onTransAdd.bind(this));
+    context.nodeEvent.on('transDel', this.onTransDel.bind(this));
     context.nodeEvent.on('postPublish', this.onPostPublish.bind(this));
     context.nodeEvent.on('donePublish', this.onDonePublish.bind(this));
     Logger.log(`Node Media Trans Server started for apps: [ ${apps}] , MediaRoot: ${this.config.http.mediaroot}, ffmpeg version: ${version}`);
   }
 
   stop() {
-    this.transSessions.forEach((session, id) => {
+    context.transSessions.forEach((session, id) => {
       session.end();
-      this.transSessions.delete(id);
+      context.transSessions.delete(id);
     });
+  }
+
+  onTransAdd(id, streamPath, taskName) {
+    let regRes = /\/(.*)\/(.*)/gi.exec(streamPath);
+    let [app, name] = _.slice(regRes, 1);
+    let i = transcodeTasks && transcodeTasks.length
+      ? transcodeTasks.length : 0;
+    
+    // Create ABR (adaptive bitrate) playlist
+    let ouPath = `${this.config.http.mediaroot}/${app}/${name}`;
+    makeABRPlaylist(ouPath, name, true);
+    // Start transcoding sessions
+    while (i--) {
+      let conf = { ...transcodeTasks[i] };
+      conf.ffmpeg = this.config.trans.ffmpeg;
+      conf.analyzeDuration = this.config.trans.analyzeDuration;
+      conf.probeSize = this.config.trans.probeSize;
+      conf.mediaroot = this.config.http.mediaroot;
+      conf.rtmpPort = this.config.rtmp.port;
+      conf.streamPath = streamPath;
+      conf.streamApp = app;
+      conf.streamName = name;
+      if (app === conf.app && conf.name === taskName) {
+        let taskId = `${app}_${conf.name || 'index'}_${id}`;
+        let session = new NodeTransSession(conf);
+        context.transSessions.set(taskId, session);
+        session.on('progress', progress => {
+          let data = {
+            frames: progress.frames,
+            fps: progress.currentFps,
+            bitRate: progress.currentKbps,
+            time: progress.timemark,
+          };
+          console.log('progress', data, taskId);
+          if (context.transSessions.get(taskId)) {
+            context.transSessions.get(taskId).data = data;
+          }
+        });
+        session.on('end', () => {
+          context.transSessions.delete(taskId);
+        });
+        session.run();
+      }
+    }
+  }
+
+  onTransDel(id, streamPath, taskName) {
+    let regRes = /\/(.*)\/(.*)/gi.exec(streamPath);
+    let [app, name] = _.slice(regRes, 1);
+    let i = transcodeTasks && transcodeTasks.length
+      ? transcodeTasks.length : 0;
+    while (i--) {
+      let conf = transcodeTasks[i];
+      if (app === conf.app && conf.name === taskName) {
+        let taskId = `${app}_${conf.name || 'index'}_${id}`;
+        console.log('onTransDelete', taskId);
+        let session = context.transSessions.get(taskId);
+        if (session) {
+          session.end();
+        }
+      }
+    }
   }
 
   onPostPublish(id, streamPath, args) {
@@ -86,7 +151,7 @@ class NodeTransServer {
       if (app === conf.app) {
         let taskId = `${app}_${conf.name || 'index'}_${id}`;
         let session = new NodeTransSession(conf);
-        this.transSessions.set(taskId, session);
+        context.transSessions.set(taskId, session);
         session.on('progress', progress => {
           let data = {
             frames: progress.frames,
@@ -95,12 +160,12 @@ class NodeTransServer {
             time: progress.timemark,
           };
           console.log('progress', data, taskId);
-          if (this.transSessions.get(taskId)) {
-            this.transSessions.get(taskId).data = data;
+          if (context.transSessions.get(taskId)) {
+            context.transSessions.get(taskId).data = data;
           }
         });
         session.on('end', () => {
-          this.transSessions.delete(taskId);
+          context.transSessions.delete(taskId);
         });
         session.run();
       }
@@ -117,7 +182,7 @@ class NodeTransServer {
       if (app === conf.app) {
         let taskId = `${app}_${conf.name || 'index'}_${id}`;
         console.log('onDonePublish', taskId);
-        let session = this.transSessions.get(taskId);
+        let session = context.transSessions.get(taskId);
         if (session) {
           session.end();
         }
