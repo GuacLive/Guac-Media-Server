@@ -82,15 +82,17 @@ const auth = (data, callback) => {
 
 const generateStreamThumbnail = (streamPath) => {
     const args = [
+        '-err_detect ignore_err',
+        '-ignore_unknown',
+        '-stats',
+        '-fflags nobuffer+genpts+igndts',
+        '-threads 1',
+        '-frames:v 1', // frames
+        '-q:v 25', // image quality
+        '-an', // no audio
+        '-y', // overwrite file
         '-i', `media${streamPath}/index.m3u8`,
-        '-vcodec' ,'png',
-        '-frames:v', '2',
-        '-an',
-        '-f', 'rawvideo',
-        //'-vf', 'scale=-2:300', // see if disabling scaling reduces CPU
-        '-ss', '00:00:01',
-        '-y',
-        `media${streamPath}/thumbnail.png`,
+        `media${streamPath}/thumbnail.jpg`,
     ];
 
     Logger.log('[Thumbnail generation] screenshot', args)
