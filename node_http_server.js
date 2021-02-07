@@ -33,9 +33,9 @@ class NodeHttpServer {
     this.config = config;
 
     let app = Express();
-    app.use(bodyParser.json());
+    app.use(express.json());
 
-    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(express.urlencoded({ extended: true }));
 
     app.all('*', (req, res, next) => {
       res.header("Access-Control-Allow-Origin", this.config.http.allow_origin);
