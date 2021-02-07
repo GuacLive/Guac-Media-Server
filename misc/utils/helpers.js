@@ -17,11 +17,11 @@ const router = context => {
   const router = express.Router();
 
   router.use(
-    bodyParser.urlencoded({
+    express.urlencoded({
       extended: true
     })
   );
-  router.use(bodyParser.json());
+  router.use(express.json());
 
   router.post('/stop', (req, res) => {
     const { stream } = req.body;
