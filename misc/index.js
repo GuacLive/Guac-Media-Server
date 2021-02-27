@@ -10,6 +10,7 @@ const IS_DEBUG = false;//process.env.NODE_ENV === 'development';
 
 const config = {
   logType: IS_DEBUG ? 4 : 2,
+  hostServer: process.env['NMS_SERVER'] || 'lon.stream.guac.live',
   auth: {
     api: true,
     api_user: conf.api_user,
@@ -135,7 +136,7 @@ nms.on('donePublish', (id, StreamPath, args) => {
   }
   axios.post(
       `${config.misc.api_endpoint}/live/on_publish_done`,
-      `name=${args.token}&tcUrl=${StreamPath}`, {
+      `name=${args.token}&streamServer=${data.config.hostServer}&tcUrl=${StreamPath}`, {
         maxRedirects: 0,
         validateStatus: function (status) {
           // Bypass redirect

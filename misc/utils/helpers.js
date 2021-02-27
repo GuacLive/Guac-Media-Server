@@ -60,7 +60,7 @@ const auth = (data, callback) => {
 
     axios.post(
             `${data.config.misc.api_endpoint}/live/publish`,
-            `name=${data.publishArgs.token}&tcUrl=${data.publishStreamPath}`, {
+            `name=${data.publishArgs.token}&streamServer=${data.config.hostServer}&tcUrl=${data.publishStreamPath}`, {
                 maxRedirects: 0,
                 validateStatus: (status) => {
                     // Bypass redirect
