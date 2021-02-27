@@ -67,6 +67,7 @@ const auth = (data, callback) => {
                     return status == 304 || (status >= 200 && status < 300);
                 },
                 headers: {
+                    Authorization: `Bearer ${data.config.misc.api_secret}`,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })

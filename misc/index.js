@@ -142,12 +142,13 @@ nms.on('donePublish', (id, StreamPath, args) => {
           return status == 304 || (status >= 200 && status < 300);
         },
         headers: {
+          Authorization: `Bearer ${config.misc.api_secret}`,
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       })
     .then(response => {
       // eslint-disable-next-line no-console
-      //console.log('[donePublish]', response);
+      console.log('[donePublish]', response);
     })
     .catch(error => {
       // eslint-disable-next-line no-console
