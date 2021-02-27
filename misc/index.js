@@ -136,7 +136,7 @@ nms.on('donePublish', (id, StreamPath, args) => {
   }
   axios.post(
       `${config.misc.api_endpoint}/live/on_publish_done`,
-      `name=${args.token}&streamServer=${data.config.hostServer}&tcUrl=${StreamPath}`, {
+      `name=${args.token}&streamServer=${config.hostServer}&tcUrl=${StreamPath}`, {
         maxRedirects: 0,
         validateStatus: function (status) {
           // Bypass redirect
