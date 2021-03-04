@@ -61,7 +61,7 @@ if (conf.ffmpeg_path) {
       hlsFlags: 'hls_time=1:hls_list_size=5:hls_flags=delete_segments'
     }
   ];
-  if(config.archive){
+  if(conf.archive){
     tasks.push(
       {
         app: 'live',
