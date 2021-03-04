@@ -31,6 +31,7 @@ class NodeTransSession extends EventEmitter {
     let analyzeDuration = this.conf.analyzeDuration || '1000000'; // used to be 2147483647
     let probeSize = this.conf.probeSize || '1000000'; // used to be 2147483647
 
+    const start = new Date();
     const random = [...Array(11)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
     if(this.conf.rec && !this.conf.name) this.conf.name = 'archive';
 
