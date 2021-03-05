@@ -86,6 +86,9 @@ class NodeTransServer {
       conf.streamApp = app;
       conf.streamName = name;
       if (app === conf.app && conf.name === taskName) {
+        if(conf.rec && !conf.name){
+          conf.name = 'archive';
+        }
         let taskId = `${app}_${conf.name || 'index'}_${id}`;
         let session = new NodeTransSession(conf);
         context.transSessions.set(taskId, session);
