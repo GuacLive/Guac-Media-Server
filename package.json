@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/GuacLive/Guac-Media-Server#readme",
   "dependencies": {
+    "aws-sdk": "^2.857.0",
     "axios": "^0.21",
     "basic-auth-connect": "^1.0.0",
     "chalk": "^4.0.0",
