@@ -86,6 +86,9 @@ class NodeTransServer {
       conf.streamApp = app;
       conf.streamName = name;
       if (app === conf.app && conf.name === taskName) {
+        if(conf.rec && !conf.name){
+          conf.name = 'archive';
+        }
         let taskId = `${app}_${conf.name || 'index'}_${id}`;
         let session = new NodeTransSession(conf);
         context.transSessions.set(taskId, session);
@@ -117,6 +120,9 @@ class NodeTransServer {
     while (i--) {
       let conf = transcodeTasks[i];
       if (app === conf.app && conf.name === taskName) {
+        if(conf.rec && !conf.name){
+          conf.name = 'archive';
+        }
         let taskId = `${app}_${conf.name || 'index'}_${id}`;
         console.log('onTransDelete', taskId);
         let session = context.transSessions.get(taskId);
@@ -142,13 +148,16 @@ class NodeTransServer {
       conf.ffmpeg = this.config.trans.ffmpeg;
       conf.analyzeDuration = this.config.trans.analyzeDuration;
       conf.probeSize = this.config.trans.probeSize;
-      conf.mediaroot = this.config.http.mediaroot;
+      conf.mediaroot = conf.rec ? './rec' : this.config.http.mediaroot;
       conf.rtmpPort = this.config.rtmp.port;
       conf.streamPath = streamPath;
       conf.streamApp = app;
       conf.streamName = name;
       conf.args = args;
       if (app === conf.app) {
+        if(conf.rec && !conf.name){
+          conf.name = 'archive';
+        }
         let taskId = `${app}_${conf.name || 'index'}_${id}`;
         let session = new NodeTransSession(conf);
         context.transSessions.set(taskId, session);
@@ -180,6 +189,9 @@ class NodeTransServer {
     while (i--) {
       let conf = this.config.trans.tasks[i];
       if (app === conf.app) {
+        if(conf.rec && !conf.name){
+          conf.name = 'archive';
+        }
         let taskId = `${app}_${conf.name || 'index'}_${id}`;
         console.log('onDonePublish', taskId);
         let session = context.transSessions.get(taskId);
