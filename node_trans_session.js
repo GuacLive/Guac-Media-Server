@@ -33,6 +33,7 @@ class NodeTransSession extends EventEmitter {
 
     const start = new Date();
     const random = [...Array(11)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
+    ouPath += this.conf.rec ? `/${random}` : '';
     if(this.conf.rec && !this.conf.name) this.conf.name = 'archive';
 
     if (this.conf.rtmp && this.conf.rtmpApp) {
@@ -54,7 +55,7 @@ class NodeTransSession extends EventEmitter {
     if (this.conf.hls) {
       this.conf.hlsFlags = this.conf.hlsFlags ? this.conf.hlsFlags : '';
       this.hlsFileName = this.conf.name ? `index${this.conf.name}.m3u8` : 'index.m3u8';
-      let mapHls = `[${this.conf.hlsFlags}:hls_segment_filename=\'${ouPath}/stream_${this.conf.name || 'index'}_${random}_%d.ts\']${ouPath}/${this.hlsFileName}|`;
+      let mapHls = `[${this.conf.hlsFlags}:hls_segment_filename=\'${ouPath}/stream_${this.conf.name || 'index'}${this.conf.rec ? '' : `_${random}`}_%d.ts\']${ouPath}/${this.hlsFileName}|`;
       mapStr += mapHls;
       Logger.log('[Transmuxing HLS] ' + this.conf.streamPath + ' to ' + ouPath + '/' + this.hlsFileName);
     }
