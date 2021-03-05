@@ -43,7 +43,8 @@ const uploadThumb = async () => {
     await upload({
       Bucket: config.s3.bucket,
       Key: key + 'thumbnail.jpg',
-      Body: thumb.data
+      Body: thumb.data,
+      ACL: 'public-read'
     });
   } catch (e) {
     console.error(e);
@@ -64,7 +65,8 @@ const uploadVideos = async retry => {
       promises.push({
         Bucket: config.s3.bucket,
         Key: key + filename,
-        Body: fs.createReadStream(path)
+        Body: fs.createReadStream(path),
+        ACL: 'public-read'
       });
     }
   }
