@@ -75,8 +75,8 @@ const uploadVideos = async retry => {
   } catch (e) {
     console.error(e);
     //agent.destroy();
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    await uploadVideos(true);
+    //await new Promise(resolve => setTimeout(resolve, 5000));
+    //await uploadVideos(true);
   }
 
   if (retry) return;
