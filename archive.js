@@ -1,22 +1,12 @@
 const config = require('./misc/config');
 const aws = require('aws-sdk');
 
-var https = require('https');
-var agent = new https.Agent({
-    rejectUnauthorized: true,
-    maxSockets: 50 // default
-});
-
 aws.config.accessKeyId = config.s3.accessKey;
 aws.config.secretAccessKey = config.s3.secret;
 aws.config.logger = console;
 
 const s3 = new aws.S3({
-  endpoint: config.s3.endpoint,
-  httpOptions: {
-    timeout: 6000,
-    agent: agent
-  }
+  endpoint: config.s3.endpoint
 });
 const fs = require('fs');
 const axios = require('axios');
@@ -62,6 +52,7 @@ const uploadVideos = async retry => {
       || filename.endsWith('.m4s')
       || filename.endsWith('.tmp')) {
       const path = ouPath + '/' + filename;
+      console.log(path);
       promises.push({
         Bucket: config.s3.bucket,
         Key: key + filename,
@@ -82,7 +73,7 @@ const uploadVideos = async retry => {
   if (retry) return;
   setTimeout(() => fs.rmdirSync(ouPath), 10000);
   axios.post(
-    `${config.endpoint}/live/archive`,
+    `${config.endpoint}/archive`,
     {
       streamName,
       duration,
