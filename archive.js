@@ -1,8 +1,22 @@
 const config = require('./misc/config');
 const aws = require('aws-sdk');
+
+var https = require('https');
+var agent = new https.Agent({
+    rejectUnauthorized: true,
+    maxSockets: 50 // default
+});
+
 aws.config.accessKeyId = config.s3.accessKey;
 aws.config.secretAccessKey = config.s3.secret;
-const s3 = new aws.S3({endpoint: config.s3.endpoint});
+
+const s3 = new aws.S3({
+  endpoint: config.s3.endpoint,
+  httpOptions: {
+    timeout: 2000,
+    agent: agent
+  }
+});
 const fs = require('fs');
 const axios = require('axios');
 const Promise = require('bluebird').Promise;
@@ -59,6 +73,7 @@ const uploadVideos = async retry => {
     await Promise.map(promises, data => s3.upload(data).promise().then(() => fs.unlinkSync(data.Body.path)), {concurrency: config.s3.concurrency});
   } catch (e) {
     console.error(e);
+    agent.destroy();
     await new Promise(resolve => setTimeout(resolve, 5000));
     await uploadVideos(true);
   }
