@@ -14,7 +14,7 @@ aws.config.logger = console;
 const s3 = new aws.S3({
   endpoint: config.s3.endpoint,
   httpOptions: {
-    timeout: 2000,
+    timeout: 6000,
     agent: agent
   }
 });
@@ -82,7 +82,7 @@ const uploadVideos = async retry => {
   if (retry) return;
   setTimeout(() => fs.rmdirSync(ouPath), 10000);
   axios.post(
-    `${config.misc.api_endpoint}/live/archive`,
+    `${config.endpoint}/live/archive`,
     {
       streamName,
       duration,
