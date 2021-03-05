@@ -5,6 +5,14 @@ aws.config.accessKeyId = config.s3.accessKey;
 aws.config.secretAccessKey = config.s3.secret;
 aws.config.logger = console;
 
+// Fix for Linode object storage error
+aws.util.update(aws.S3.prototype, {
+  addExpect100Continue: function addExpect100Continue(req) {
+      console.log('Depreciating this workaround, because introduced a bug');
+      console.log('Check: https://github.com/andrewrk/node-s3-client/issues/74');
+  }
+});
+
 const s3 = new aws.S3({
   endpoint: config.s3.endpoint
 });
@@ -65,9 +73,8 @@ const uploadVideos = async retry => {
     await Promise.map(promises, data => s3.upload(data).promise().then(() => fs.unlinkSync(data.Body.path)), {concurrency: config.s3.concurrency});
   } catch (e) {
     console.error(e);
-    //agent.destroy();
-    //await new Promise(resolve => setTimeout(resolve, 5000));
-    //await uploadVideos(true);
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    await uploadVideos(true);
   }
 
   if (retry) return;
