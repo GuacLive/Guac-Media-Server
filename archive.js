@@ -9,6 +9,7 @@ var agent = new https.Agent({
 
 aws.config.accessKeyId = config.s3.accessKey;
 aws.config.secretAccessKey = config.s3.secret;
+aws.config.logger = console;
 
 const s3 = new aws.S3({
   endpoint: config.s3.endpoint,
@@ -73,7 +74,7 @@ const uploadVideos = async retry => {
     await Promise.map(promises, data => s3.upload(data).promise().then(() => fs.unlinkSync(data.Body.path)), {concurrency: config.s3.concurrency});
   } catch (e) {
     console.error(e);
-    agent.destroy();
+    //agent.destroy();
     await new Promise(resolve => setTimeout(resolve, 5000));
     await uploadVideos(true);
   }
