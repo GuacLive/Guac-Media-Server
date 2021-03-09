@@ -131,7 +131,7 @@ const generateStreamThumbnail = (streamPath) => {
 };
 
 const removeStreamThumbnail = (streamPath) => {
-    let path = `media${streamPath}/thumbnail.png`;
+    let path = `./media${streamPath}/thumbnail.jpg`;
     fs.unlink(path, (error) => {
         if(error) Logger.log('[Thumbnail removal] screenshot', error)
     })
