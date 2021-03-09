@@ -3,7 +3,6 @@ const spawn = require('child_process').spawn;
 const axios = require('axios');
 
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 
 const Logger = require('../../node_core_logger');
 
@@ -11,7 +10,6 @@ const config = require('../config');
 const cmd = config.ffmpeg_path;
 
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const router = context => {
   const router = express.Router();
@@ -80,6 +78,29 @@ const auth = (data, callback) => {
             data.sendStatusMessage(data.publishStreamId, 'error', 'NetStream.publish.Unauthorized', 'Authorization required.');
         });
 };
+
+
+const getStreamConfig = (name) => {
+    return new Promise((resolve, reject) => {
+        if(config.misc.ignore_auth){
+            resolve({archive: true});
+            return;
+        }
+        axios.get(`${config.misc.api_endpoint}/streamConfig/${name}`, {
+            headers: {
+                Authorization: `Bearer ${data.config.misc.api_secret}`
+            }
+        })
+        .then(response => {
+            console.info('Response from getStreamConfig', response);
+            resolve(response);
+        }).catch(error => {
+            console.error(error);
+            reject(error);
+        });
+    });
+};
+
 
 const generateStreamThumbnail = (streamPath) => {
     const args = [
@@ -191,6 +212,7 @@ const makeABRPlaylist = (ouPath, name, transcodeEnabled) => {
 module.exports = {
     router,
     auth,
+    getStreamConfig,
     generateStreamThumbnail,
     removeStreamThumbnail,
     extractProgress,

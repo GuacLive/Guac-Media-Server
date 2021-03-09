@@ -13,8 +13,10 @@ const _ = require('lodash');
 const mkdirp = require('mkdirp');
 
 const makeABRPlaylist = require('./misc/utils/helpers').makeABRPlaylist;
+const getStreamConfig = require('./misc/utils/transcode').getStreamConfig;
 
 const transcodeTasks = require('./misc/utils/transcode').tasks;
+
 class NodeTransServer {
   constructor(config) {
     this.config = config;
@@ -133,7 +135,7 @@ class NodeTransServer {
     }
   }
 
-  onPostPublish(id, streamPath, args) {
+  async onPostPublish(id, streamPath, args) {
     let regRes = /\/(.*)\/(.*)/gi.exec(streamPath);
     let [app, name] = _.slice(regRes, 1);
     let i = this.config.trans.tasks && this.config.trans.tasks.length
@@ -154,7 +156,14 @@ class NodeTransServer {
       conf.streamApp = app;
       conf.streamName = name;
       conf.args = args;
-      if (app === conf.app) {
+
+      // Grab streamer details (archive status, bitrate, possibly more in the future)
+      const streamConfig = await getStreamConfig(name);
+
+      // If this is a recording task, check if they have enabled archival
+      if(conf.rec && !streamConfig.archive){
+        // noop
+      }else if (app === conf.app) {
         if(conf.rec && !conf.name){
           conf.name = 'archive';
         }
