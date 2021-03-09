@@ -13,7 +13,7 @@ const _ = require('lodash');
 const mkdirp = require('mkdirp');
 
 const makeABRPlaylist = require('./misc/utils/helpers').makeABRPlaylist;
-const getStreamConfig = require('./misc/utils/transcode').getStreamConfig;
+const getStreamConfig = require('./misc/utils/helpers').getStreamConfig;
 
 const transcodeTasks = require('./misc/utils/transcode').tasks;
 
