@@ -104,14 +104,14 @@ const getStreamConfig = (name) => {
 
 const generateStreamThumbnail = (streamPath) => {
     const args = [
-        '-err_detect ignore_err',
+        '-err_detect', 'ignore_err',
         '-ignore_unknown',
         '-stats',
         '-i', `./media${streamPath}/index.m3u8`,
-        '-fflags nobuffer+genpts+igndts',
-        '-threads 1',
-        '-frames:v 1', // frames
-        '-q:v 25', // image quality
+        '-fflags', 'nobuffer+genpts+igndts',
+        '-threads','1',
+        '-frames:v', '1', // frames
+        '-q:v', '25', // image quality
         '-an', // no audio
         '-y', // overwrite file
         `./media${streamPath}/thumbnail.jpg`,
