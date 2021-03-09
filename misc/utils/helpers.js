@@ -82,7 +82,7 @@ const auth = (data, callback) => {
 
 const getStreamConfig = (name) => {
     return new Promise((resolve, reject) => {
-        if(config.misc.ignore_auth){
+        if(process.env.NODE_ENV === 'development'){
             resolve({archive: true});
             return;
         }
