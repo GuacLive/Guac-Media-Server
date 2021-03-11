@@ -86,9 +86,9 @@ const getStreamConfig = (name) => {
             //resolve({archive: true});
             //return;
         }
-        axios.get(`${config.misc.api_endpoint}/streamConfig/${name}`, {
+        axios.get(`${config.endpoint}/streamConfig/${name}`, {
             headers: {
-                Authorization: `Bearer ${config.misc.api_secret}`
+                Authorization: `Bearer ${config.api_secret}`
             }
         })
         .then(response => {
