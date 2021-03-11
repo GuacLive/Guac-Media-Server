@@ -83,12 +83,12 @@ const auth = (data, callback) => {
 const getStreamConfig = (name) => {
     return new Promise((resolve, reject) => {
         if(process.env.NODE_ENV === 'development'){
-            resolve({archive: true});
-            return;
+            //resolve({archive: true});
+            //return;
         }
         axios.get(`${config.misc.api_endpoint}/streamConfig/${name}`, {
             headers: {
-                Authorization: `Bearer ${data.config.misc.api_secret}`
+                Authorization: `Bearer ${config.misc.api_secret}`
             }
         })
         .then(response => {
