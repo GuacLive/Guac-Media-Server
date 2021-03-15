@@ -88,7 +88,7 @@ const uploadVideos = async retry => {
       duration,
       random,
       thumbnail: encodeURIComponent(`https://${config.s3.publishUrl}/${key}thumbnail.jpg`),
-      stream: encodeURIComponent(`https://${config.s3.publishUrl}/${key}index.m3u8`)
+      stream: encodeURIComponent(`https://${config.s3.publishUrl}/${key}indexarchive.m3u8`)
     },
     {
       headers: {
