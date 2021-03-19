@@ -236,7 +236,9 @@ class NodeRtmpSession {
   }
 
   onSocketError(e) {
-    Logger.log('onSocketError', e);
+    if (!e || !e.code || e.code !== 'ECONNRESET') {
+      Logger.log('onSocketError', e);
+    }
     this.stop();
   }
 
