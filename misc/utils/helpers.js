@@ -69,8 +69,8 @@ const auth = (data, callback) => {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })
-        .then(response => {
-            console.info('Response from auth', response);
+        .then(() => {
+            Logger.log(`[rtmp publish] Authorized. id=${data.id} streamPath=${data.publishStreamPath} streamId=${data.publishStreamId} token=${data.publishArgs.token} `);
             callback();
         }).catch(error => {
             console.error(error);
@@ -92,10 +92,10 @@ const getStreamConfig = (name) => {
             }
         })
         .then(response => {
-            console.info('Response from getStreamConfig', response);
-            resolve(response);
+            Logger.info('Response from getStreamConfig', response);
+            resolve(response && response.data);
         }).catch(error => {
-            console.error(error);
+            Logger.error(error);
             reject(error);
         });
     });
@@ -132,8 +132,8 @@ const generateStreamThumbnail = (streamPath) => {
 
 const removeStreamThumbnail = (streamPath) => {
     let path = `./media${streamPath}/thumbnail.jpg`;
-    fs.unlink(path, (error) => {
-        if(error) Logger.log('[Thumbnail removal] screenshot', error)
+    fs.unlink(path, () => {
+        // noop
     })
 };
 

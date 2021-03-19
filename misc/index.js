@@ -149,10 +149,10 @@ nms.on('donePublish', (id, StreamPath, args) => {
       })
     .then(response => {
       // eslint-disable-next-line no-console
-      console.log('[donePublish]', response);
+      Logger.log(`[rtmp donePublish] id=${data.id} streamPath=${data.publishStreamPath} streamId=${data.publishStreamId} token=${data.publishArgs.token} `);
     })
     .catch(error => {
       // eslint-disable-next-line no-console
-      console.log('[donePublish]', error);
+      Logger.error('[rtmp donePublish]', error);
     });
 });

@@ -163,6 +163,7 @@ class NodeTransServer {
       // If this is a recording task, check if they have enabled archival
       if(conf.rec && !streamConfig.archive){
         // noop
+        Logger.info('conf.rec but archive disabled, noop');
       }else if (app === conf.app) {
         if(conf.rec && !conf.name){
           conf.name = 'archive';
