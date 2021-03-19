@@ -149,7 +149,7 @@ nms.on('donePublish', (id, StreamPath, args) => {
       })
     .then(response => {
       // eslint-disable-next-line no-console
-      Logger.log(`[rtmp donePublish] id=${data.id} streamPath=${data.publishStreamPath} streamId=${data.publishStreamId} token=${data.publishArgs.token} `);
+      Logger.log(`[rtmp donePublish] id=${id} streamPath=${StreamPath}  args=${JSON.stringify(args)} `);
     })
     .catch(error => {
       // eslint-disable-next-line no-console
