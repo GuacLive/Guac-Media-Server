@@ -92,7 +92,7 @@ const getStreamConfig = (name) => {
             }
         })
         .then(response => {
-            Logger.info('Response from getStreamConfig', response);
+            Logger.log('Response from getStreamConfig', response);
             resolve(response && response.data);
         }).catch(error => {
             Logger.error(error);
