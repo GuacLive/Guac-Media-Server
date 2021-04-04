@@ -96,8 +96,8 @@ function clip(req, res, next) {
     let fullPath = path.join(__dirname, '../..', path.sep, 'rec', path.sep, 'live', path.sep, filename);
 
     const argv = [
-      '-i', `http://${process.env['NMS_SERVER'] || 'lon.stream.guac.live'}/rec/live/${name}/${archiveSession.random}/indexarchive.m3u8`,
       '-sseof', `-${length}`,
+      '-i', `http://${process.env['NMS_SERVER'] || 'lon.stream.guac.live'}/rec/live/${name}/${archiveSession.random}/indexarchive.m3u8`,
       '-c', 'copy',
       '-bsf:a', 'aac_adtstoasc',
       '-f', 'mp4',
