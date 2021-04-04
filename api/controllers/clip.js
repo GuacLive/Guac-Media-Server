@@ -77,7 +77,7 @@ function clip(req, res, next) {
   let time = (new Date).getTime();
   console.log(this, this.conf, this.nts);
   Logger.log('Clip route', length, name);
-  if (length && app && name) {
+  if (length && name) {
     if (length <= 0 || length < 60){ 
       res.sendStatus(400);
       res.end('Length too long');
