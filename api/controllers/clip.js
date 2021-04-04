@@ -92,7 +92,7 @@ function clip(req, res, next) {
       return;
     }
 
-    this.nodeEvent.emit('clip', length,, name);
+    this.nodeEvent.emit('clip', length, name);
     let filename = `clip_${name}_${time}.mp4`;
     let fullPath = path.join(this.conf.rec, path.sep, filename);
 
