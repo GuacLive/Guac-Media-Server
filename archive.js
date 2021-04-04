@@ -38,7 +38,7 @@ const upload = async data => {
 
 const uploadThumb = async () => {
   try {
-    const thumb = await axios.get(`http://127.0.0.1:${config.http_port}/live/${streamName}/thumbnail.jpg?v=${Math.floor((new Date().getTime() - 15000) / 60000)}`,
+    const thumb = await axios.get(`http://${process.env['NMS_SERVER'] || 'lon.stream.guac.live'}/live/${streamName}/thumbnail.jpg?v=${Math.floor((new Date().getTime() - 15000) / 60000)}`,
       {responseType: 'arraybuffer'});
     await upload({
       Bucket: config.s3.bucket,
