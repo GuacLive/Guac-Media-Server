@@ -17,6 +17,7 @@ const NodeFlvSession = require('./node_flv_session');
 const HTTP_PORT = 80;
 const HTTPS_PORT = 443;
 const HTTP_MEDIAROOT = './media';
+const HTTP_RECROOT = './rec';
 const Logger = require('./node_core_logger');
 const context = require('./node_core_ctx');
 
@@ -30,6 +31,7 @@ class NodeHttpServer {
   constructor(config) {
     this.port = config.http.port || HTTP_PORT;
     this.mediaroot = config.http.mediaroot || HTTP_MEDIAROOT;
+    this.recroot = config.http.recroot || HTTP_RECROOT;
     this.config = config;
 
     let app = Express();
@@ -69,6 +71,7 @@ class NodeHttpServer {
 
     app.use(Express.static(path.join(__dirname + '/public')));
     app.use(Express.static(this.mediaroot));
+    app.use('/rec', Express.static(this.recroot));
     if (config.http.webroot) {
       app.use(Express.static(config.http.webroot));
     }

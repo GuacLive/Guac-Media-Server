@@ -26,7 +26,8 @@ const config = {
   http: {
     port: conf.http_port,
     allow_origin: '*',
-    mediaroot: './media'
+    mediaroot: './media',
+    recroot: './rec'
   },
   misc: {
     api_endpoint: conf.endpoint,

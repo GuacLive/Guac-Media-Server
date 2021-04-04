@@ -150,7 +150,7 @@ class NodeTransServer {
       conf.ffmpeg = this.config.trans.ffmpeg;
       conf.analyzeDuration = this.config.trans.analyzeDuration;
       conf.probeSize = this.config.trans.probeSize;
-      conf.mediaroot = conf.rec ? './rec' : this.config.http.mediaroot;
+      conf.mediaroot = conf.rec ? this.config.http.recroot : this.config.http.mediaroot;
       conf.rtmpPort = this.config.rtmp.port;
       conf.streamPath = streamPath;
       conf.streamApp = app;
