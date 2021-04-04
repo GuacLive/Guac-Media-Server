@@ -57,12 +57,12 @@ const uploadClip = async (key, fullPath) => {
 
 function getArchiveSession(transSessions, streamName){
   for (let session of transSessions.values()) {
-    console.log('getArchiveSession', session, session.conf);
+    //console.log('getArchiveSession', session, session.conf);
     if(
       session &&
       session.conf.streamName &&
       session.conf.streamName === streamName &&
-      session.rec
+      session.conf.rec
       ){
         return session;
     }
