@@ -56,7 +56,7 @@ const uploadClip = async (key, fullPath) => {
 };
 
 function getArchiveSession(streamName){
-  for (let session of this.nts.transSessions.values()) {
+  for (let session of this.transSessions.values()) {
     console.log('getArchiveSession', session, session.conf);
     if(
       session &&
@@ -75,7 +75,6 @@ function clip(req, res, next) {
   let length = req.body.length;
   let name = req.body.name;
   let time = (new Date).getTime();
-  console.log(this, this.conf, this.nts);
   Logger.log('Clip route', length, name);
   if (length && name) {
     if (length <= 0 || length < 60){ 
@@ -94,10 +93,10 @@ function clip(req, res, next) {
 
     this.nodeEvent.emit('clip', length, name);
     let filename = `clip_${name}_${time}.mp4`;
-    let fullPath = path.join(this.conf.rec, path.sep, filename);
+    let fullPath = path.join('./rec', path.sep, filename);
 
     const argv = [
-      '-i', `http://127.0.0.1:${this.config.http_port}/rec/live/${archiveSession.random}/${name}/indexarchive.m3u8`,
+      '-i', `http://127.0.0.1:${config.http_port}/rec/live/${archiveSession.random}/${name}/indexarchive.m3u8`,
       '-sseof', `-${length}`,
       '-c', 'copy',
       '-bsf:a', 'aac_adtstoasc',
@@ -105,7 +104,7 @@ function clip(req, res, next) {
       fullPath
     ];
 
-    this.ffmpeg_exec = spawn(this.conf.ffmpeg, argv);
+    this.ffmpeg_exec = spawn(config.ffmpeg_path, argv);
     this.ffmpeg_exec.on('error', (e) => {
       Logger.ffdebug(e);
     });
