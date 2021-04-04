@@ -32,7 +32,7 @@ class NodeTransSession extends EventEmitter {
     let probeSize = this.conf.probeSize || '1000000'; // used to be 2147483647
 
     const start = new Date();
-    const random = [...Array(11)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
+    const random = this.random = [...Array(11)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
     ouPath += this.conf.rec ? `/${random}` : '';
     if(this.conf.rec && !this.conf.name) this.conf.name = 'archive';
 

@@ -26,6 +26,7 @@ const misc = require('./misc/utils/helpers');
 const streamsRoute = require('./api/routes/streams');
 const serverRoute = require('./api/routes/server');
 const relayRoute = require('./api/routes/relay');
+const clipRoute = require('./api/routes/clip');
 
 class NodeHttpServer {
   constructor(config) {
@@ -67,6 +68,7 @@ class NodeHttpServer {
       app.use('/api/server', serverRoute(context));
       app.use('/api/relay', relayRoute(context));
       app.use('/api/misc', misc.router(context));
+      app.use('/api/clip', clipRoute(context));
     }
 
     app.use(Express.static(path.join(__dirname + '/public')));
