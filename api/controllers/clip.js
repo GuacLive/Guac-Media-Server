@@ -93,7 +93,7 @@ function clip(req, res, next) {
 
     this.nodeEvent.emit('clip', length, name);
     let filename = `clip_${name}_${time}.mp4`;
-    let fullPath = path.join(__dirname, '../../..', path.sep, 'rec', path.sep, filename);
+    let fullPath = path.join(__dirname, '../..', path.sep, 'rec', path.sep, 'live', path.sep, filename);
 
     const argv = [
       '-i', `http://127.0.0.1:${config.http_port}/rec/live/${name}/${archiveSession.random}/indexarchive.m3u8`,
