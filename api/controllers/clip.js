@@ -78,16 +78,16 @@ function clip(req, res, next) {
   Logger.log('Clip route', length, name);
   if (length && name) {
     if (length <= 0 || length < 60){ 
-      res.sendStatus(400);
-      res.end('Length too long');
+      res.status(400);
+      res.send('Length too long');
       return;
     }
 
     const archiveSession = getArchiveSession(name);
     console.log(archiveSession);
     if (!archiveSession) {
-      res.sendStatus(400);
-      res.end('Stream is not being archived');
+      res.status(400);
+      res.send('Stream is not being archived');
       return;
     }
 
@@ -119,9 +119,9 @@ function clip(req, res, next) {
   
     this.ffmpeg_exec.on('close', async (code) => {
       await uploadClip(filename, fullPath);
+      res.sendStatus(200);
     });
 
-    res.sendStatus(200);
   } else {
     res.sendStatus(400);
   }
