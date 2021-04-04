@@ -55,8 +55,8 @@ const uploadClip = async (key, fullPath) => {
   }
 };
 
-function getArchiveSession(streamName){
-  for (let session of this.transSessions.values()) {
+function getArchiveSession(transSessions, streamName){
+  for (let session of transSessions.values()) {
     console.log('getArchiveSession', session, session.conf);
     if(
       session &&
@@ -77,13 +77,13 @@ function clip(req, res, next) {
   let time = (new Date).getTime();
   Logger.log('Clip route', length, name);
   if (length && name) {
-    if (length <= 0 || length < 60){ 
+    if (length <= 0 || length > 60){ 
       res.status(400);
       res.send('Length too long');
       return;
     }
 
-    const archiveSession = getArchiveSession(name);
+    const archiveSession = getArchiveSession(this.transSessions, name);
     console.log(archiveSession);
     if (!archiveSession) {
       res.status(400);
