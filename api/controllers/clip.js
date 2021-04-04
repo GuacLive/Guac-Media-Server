@@ -96,7 +96,7 @@ function clip(req, res, next) {
     let fullPath = path.join('rec', path.sep, filename);
 
     const argv = [
-      '-i', `http://127.0.0.1:${config.http_port}/rec/live/${archiveSession.random}/${name}/indexarchive.m3u8`,
+      '-i', `http://127.0.0.1:${config.http_port}/rec/live/${name}/${archiveSession.random}/indexarchive.m3u8`,
       '-sseof', `-${length}`,
       '-c', 'copy',
       '-bsf:a', 'aac_adtstoasc',
