@@ -91,7 +91,7 @@ function getArchiveSession(transSessions, streamName){
 }
 
 
-function clip(req, res, next) {
+async function clip(req, res, next) {
   let length = req.body.length;
   let name = req.body.name;
   let time = (new Date).getTime();
@@ -116,7 +116,8 @@ function clip(req, res, next) {
     let filename = `clip_${name}_${time}.mp4`;
     let fullPath = path.join(__dirname, '../..', path.sep, 'rec', path.sep, 'live', path.sep, filename);
 
-    const playlist = HLS.parse(getM3u8(playlistData));
+    const playlistData = await getM3u8(playlistUrl);
+    const playlist = HLS.parse(playlistData);
     let startSegment = playlist.segments.length - 1 - length;
     let endSegment = playlist.segments.length - 1;
     let segments = playlist.segments.slice(startSegment, endSegment);
