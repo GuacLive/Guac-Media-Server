@@ -9,6 +9,10 @@ const {
 const path = require('path');
 const _ = require('lodash');
 
+const HLS = require('hls-parser');
+
+const axios = require('axios');
+
 const Logger = require('../../node_core_logger');
 
 
@@ -31,6 +35,22 @@ const s3 = new aws.S3({
   endpoint: config.s3.endpoint
 });
 const fs = require('fs');
+
+const getM3u8 = async (url) => {
+  let data;
+  await axios
+    .get(url)
+    .then((response) => {
+      data = response.data;
+    })
+    .catch(async (e) => {
+      if (!e.response) {
+        return console.error(e);
+      }
+      console.error(e.response.data);
+    });
+  return data;
+};
 
 const upload = async data => {
   try {
@@ -92,12 +112,22 @@ function clip(req, res, next) {
     }
 
     this.nodeEvent.emit('clip', length, name);
+    let playlistUrl = `http://${process.env['NMS_SERVER'] || 'lon.stream.guac.live'}/rec/live/${name}/${archiveSession.random}/indexarchive.m3u8`
     let filename = `clip_${name}_${time}.mp4`;
     let fullPath = path.join(__dirname, '../..', path.sep, 'rec', path.sep, 'live', path.sep, filename);
 
+    const playlist = HLS.parse(getM3u8(playlistData));
+    let startSegment = playlist.segments.length - 1 - length;
+    let endSegment = playlist.segments.length - 1;
+    let segments = playlist.segments.slice(startSegment, endSegment);
+    let segmentUris = segments.map((segment) => {
+      return segment.uri
+    })
+
     const argv = [
-      '-sseof', `-${length}`,
-      '-i', `http://${process.env['NMS_SERVER'] || 'lon.stream.guac.live'}/rec/live/${name}/${archiveSession.random}/indexarchive.m3u8`,
+      '-safe', '0',
+      '-protocol_whitelist', 'file,http,https,tcp,tls',
+      '-i', `concat:${segmentUris.join('|')}`,
       '-c', 'copy',
       '-bsf:a', 'aac_adtstoasc',
       '-f', 'mp4',

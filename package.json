@@ -30,6 +30,7 @@
     "chalk": "^4.0.0",
     "dateformat": "^3.0.3",
     "express": "^5.0.0-alpha.8",
+    "hls-parser": "^0.10.3",
     "lodash": ">=4.17.13",
     "mkdirp": "1.0.4",
     "node-cron": "^2.0.3",
