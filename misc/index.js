@@ -59,7 +59,7 @@ if (conf.ffmpeg_path) {
       ac: 'copy',
       vc: 'copy',
       hls: true,
-      hlsFlags: 'hls_time=1:hls_list_size=5:hls_flags=delete_segments'
+      hlsFlags: 'hls_time=1:hls_list_size=5:hls_flags=delete_segments+program_date_time'
     }
   ];
   if(conf.archive){
