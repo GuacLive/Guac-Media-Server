@@ -126,8 +126,7 @@ async function clip(req, res, next) {
     })
 
     const argv = [
-      '-safe', '0',
-      '-protocol_whitelist', 'file,http,https,tcp,tls',
+      '-protocol_whitelist', 'file,http,https,tcp,tls,concat',
       '-i', `concat:${segmentUris.join('|')}`,
       '-c', 'copy',
       '-bsf:a', 'aac_adtstoasc',
