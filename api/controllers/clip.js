@@ -117,13 +117,24 @@ async function clip(req, res, next) {
     let fullPath = path.join(__dirname, '../..', path.sep, 'rec', path.sep, 'live', path.sep, filename);
 
     const playlistData = await getM3u8(playlistUrl);
-    const playlist = HLS.parse(playlistData);
+    var playlist;
+    try{
+      playlist = HLS.parse(playlistData);
+    }catch(e){
+      res.status(500);
+      return res.send('Invalid HLS playlist for archive')
+    }
     let startSegment = playlist.segments.length - 1 - length;
     let endSegment = playlist.segments.length - 1;
     let segments = playlist.segments.slice(startSegment, endSegment);
     let segmentUris = segments.map((segment) => {
       return segment.uri
     })
+
+    if(!segmentUris || segmentUris.length === 0){
+      res.status(500);
+      return res.send('No segment URIs found')
+    }
 
     const argv = [
       '-protocol_whitelist', 'file,http,https,tcp,tls,concat',
@@ -149,7 +160,12 @@ async function clip(req, res, next) {
   
     this.ffmpeg_exec.on('close', async (code) => {
       await uploadClip(filename, fullPath);
-      res.sendStatus(200);
+      res.status(200);
+      res.send({
+        filename,
+        url: `https://${config.s3.publishUrl}/stream-clips/${filename}`,
+        time
+      });
     });
 
   } else {
