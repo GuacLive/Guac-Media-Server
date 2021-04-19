@@ -164,7 +164,7 @@ async function clip(req, res, next) {
       res.status(200);
       res.send({
         filename,
-        url: `https://${config.s3.publishUrl}/stream-clips/${filename}`,
+        url: `https://${config.s3.publishUrl.replace('/stream-vods', '/stream-clips')}/${filename}`,
         time
       });
     });
