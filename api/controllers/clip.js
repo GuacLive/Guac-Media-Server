@@ -124,7 +124,12 @@ async function clip(req, res, next) {
       res.status(500);
       return res.send('Invalid HLS playlist for archive')
     }
-    let startSegment = playlist.segments.length - 1 - Math.floor(length / HLS_TIME);
+    let startSegment;
+    if(playlist.segments.length < playlist.segments.length){
+       startSegment = 0;
+    }else{
+      startSegment = playlist.segments.length - 1 - Math.floor(length / HLS_TIME);
+    }
     let endSegment = playlist.segments.length - 1;
     let segments = playlist.segments.slice(startSegment, endSegment);
     let segmentUris = segments.map((segment) => {
