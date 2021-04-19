@@ -112,7 +112,8 @@ async function clip(req, res, next) {
     }
 
     this.nodeEvent.emit('clip', length, name);
-    let playlistUrl = `http://${process.env['NMS_SERVER'] || 'lon.stream.guac.live'}/rec/live/${name}/${archiveSession.random}/indexarchive.m3u8`
+    let archiveUrl = `http://${process.env['NMS_SERVER'] || 'lon.stream.guac.live'}/rec/live/${name}/${archiveSession.random}`
+    let playlistUrl = `${archiveUrl}/indexarchive.m3u8`;
     let filename = `clip_${name}_${time}.mp4`;
     let fullPath = path.join(__dirname, '../..', path.sep, 'rec', path.sep, 'live', path.sep, filename);
 
@@ -128,7 +129,7 @@ async function clip(req, res, next) {
     let endSegment = playlist.segments.length - 1;
     let segments = playlist.segments.slice(startSegment, endSegment);
     let segmentUris = segments.map((segment) => {
-      return segment.uri
+      return `${archiveUrl}/${segment.uri}`;
     })
 
     if(!segmentUris || segmentUris.length === 0){
