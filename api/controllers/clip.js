@@ -125,8 +125,9 @@ async function clip(req, res, next) {
       return res.send('Invalid HLS playlist for archive')
     }
     let startSegment;
-    if(playlist.segments.length < playlist.segments.length){
-       startSegment = 0;
+    // If we are at the start of a stream, we might not have enough segments for x sec
+    if(playlist.segments.length < Math.floor(length / HLS_TIME)){
+      startSegment = 0;
     }else{
       startSegment = playlist.segments.length - 1 - Math.floor(length / HLS_TIME);
     }
