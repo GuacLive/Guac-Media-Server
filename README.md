@@ -69,7 +69,7 @@ A Node.js implementation of RTMP/HTTP-FLV/WS-FLV/HLS/DASH Media Server
 
 # Features
  - Cross platform support Windows/Linux/Unix
- - Support H.264/H.265/AAC/MP3/SPEEX/NELLYMOSER/G.711/OPUS
+ - Support H.264/H.265(flv_id=12)/AAC/MP3/SPEEX/NELLYMOSER/G.711/OPUS(flv_id=13)
  - Support GOP cache
  - Support remux to LIVE-HTTP-FLV,Support [flv.js](https://github.com/Bilibili/flv.js) playback
  - Support remux to LIVE-WebSocket-FLV,Support [flv.js](https://github.com/Bilibili/flv.js) playback
