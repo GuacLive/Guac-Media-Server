@@ -4,7 +4,7 @@ const axios = require('axios');
 
 const fs = require('fs');
 
-const Logger = require('../../node_core_logger');
+const Logger = require('../../src/node_core_logger');
 
 const config = require('../config');
 const cmd = config.ffmpeg_path;
