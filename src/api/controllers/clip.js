@@ -114,7 +114,7 @@ async function clip(req, res, next) {
     let archiveUrl = `http://${process.env['NMS_SERVER'] || 'lon.stream.guac.live'}/rec/live/${name}/${archiveSession.random}`
     let playlistUrl = `${archiveUrl}/indexarchive.m3u8`;
     let filename = `clip_${name}_${time}.mp4`;
-    let fullPath = path.join(__dirname, '../..', path.sep, 'rec', path.sep, 'live', path.sep, filename);
+    let fullPath = path.join(__dirname, '../../..', path.sep, 'rec', path.sep, 'live', path.sep, filename);
 
     const playlistData = await getM3u8(playlistUrl);
     var playlist;
