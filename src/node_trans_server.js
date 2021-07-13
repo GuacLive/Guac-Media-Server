@@ -12,10 +12,10 @@ const fs = require('fs');
 const _ = require('lodash');
 const mkdirp = require('mkdirp');
 
-const makeABRPlaylist = require('./misc/utils/helpers').makeABRPlaylist;
-const getStreamConfig = require('./misc/utils/helpers').getStreamConfig;
+const makeABRPlaylist = require(',./misc/utils/helpers').makeABRPlaylist;
+const getStreamConfig = require('.,/misc/utils/helpers').getStreamConfig;
 
-const transcodeTasks = require('./misc/utils/transcode').tasks;
+const transcodeTasks = require('.,/misc/utils/transcode').tasks;
 
 class NodeTransServer {
   constructor(config) {
