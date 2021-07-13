@@ -12,6 +12,7 @@ const NodeRelayServer = require('./node_relay_server');
 const NodeFissionServer = require('./node_fission_server');
 const context = require('./node_core_ctx');
 
+const Package = require('../package.json');
 class NodeMediaServer {
   constructor(config) {
     this.config = config;
