@@ -13,7 +13,7 @@ const dateFormat = require('dateformat');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 
-const { extractProgress } = require('./misc/utils/helpers');
+const { extractProgress } = require('../misc/utils/helpers');
 
 class NodeTransSession extends EventEmitter {
   constructor(conf) {
