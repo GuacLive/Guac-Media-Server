@@ -13,7 +13,7 @@ const HLS = require('hls-parser');
 
 const axios = require('axios');
 
-const Logger = require('../../src/node_core_logger');
+const Logger = require('../../node_core_logger');
 
 const HLS_TIME = 15;
 const config = require('../../misc/config');
