@@ -12,7 +12,6 @@ const config = {
   logType: IS_DEBUG ? 4 : 2,
   hostServer: process.env['NMS_SERVER'] || 'lon.stream.guac.live',
   auth: {
-    api: true,
     api_user: conf.api_user,
     api_pass: conf.api_pass
   },
@@ -24,10 +23,11 @@ const config = {
     ping_timeout: 30
   },
   http: {
+    api: true,
     port: conf.http_port,
     allow_origin: '*',
-    mediaroot: './media',
-    recroot: './rec'
+    mediaroot: path.resolve(__dirname+'/../media'),
+    recroot: path.resolve(__dirname+'/../rec'),
   },
   misc: {
     api_endpoint: conf.endpoint,
