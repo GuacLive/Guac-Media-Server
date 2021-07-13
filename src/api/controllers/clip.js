@@ -16,7 +16,7 @@ const axios = require('axios');
 const Logger = require('../../node_core_logger');
 
 const HLS_TIME = 15;
-const config = require('../../misc/config');
+const config = require('../../../misc/config');
 const aws = require('aws-sdk');
 
 aws.config.accessKeyId = config.s3.accessKey;
