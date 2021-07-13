@@ -19,6 +19,8 @@ class NodeMediaServer {
 
   run() {
     Logger.setLogType(this.config.logType);
+    Logger.log(`Guac Media Server v${Package.version}`);
+
     if (this.config.rtmp) {
       this.nrs = new NodeRtmpServer(this.config);
       this.nrs.run();
@@ -60,6 +62,10 @@ class NodeMediaServer {
 
     process.on('uncaughtException', function (err) {
       Logger.error('uncaughtException', err);
+    });
+  
+    process.on('SIGINT', function() {
+      process.exit();
     });
   }
 
