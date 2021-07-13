@@ -5,6 +5,7 @@ const cron = require('node-cron')
 const helpers = require('./utils/helpers');
 const Logger = require('../src/node_core_logger');
 const conf = require('./config');
+const path = require('path');
 
 const IS_DEBUG = false;//process.env.NODE_ENV === 'development';
 
