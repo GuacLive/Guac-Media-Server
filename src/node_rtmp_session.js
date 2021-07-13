@@ -4,10 +4,7 @@
 //  Copyright (c) 2018 Nodemedia. All rights reserved.
 //
 
-const QueryString = require("querystring");
 const buffer = require('buffer');
-const AV = require("./node_core_av");
-const { AUDIO_SOUND_RATE, AUDIO_CODEC_NAME, VIDEO_CODEC_NAME } = require("./node_core_av");
 
 const AMF = require("./node_core_amf");
 const Handshake = require("./node_rtmp_handshake");
