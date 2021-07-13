@@ -1,9 +1,9 @@
-const NodeMediaServer = require('../node_media_server');
+const NodeMediaServer = require('../src/node_media_server');
 const axios = require('axios');
 const cron = require('node-cron')
 // eslint-disable-next-line import/no-unresolved
 const helpers = require('./utils/helpers');
-const Logger = require('../node_core_logger');
+const Logger = require('../src/node_core_logger');
 const conf = require('./config');
 
 const IS_DEBUG = false;//process.env.NODE_ENV === 'development';

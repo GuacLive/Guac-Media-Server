@@ -4,7 +4,7 @@
 //  Copyright (c) 2018 Nodemedia. All rights reserved.
 //
 const Logger = require('./node_core_logger');
-const NodeCoreUtils = require("./node_core_utils");
+const NodeCoreUtils = require('./node_core_utils');
 
 const EventEmitter = require('events');
 const { spawn } = require('child_process');
@@ -21,12 +21,11 @@ class NodeRelaySession extends EventEmitter {
 
   run() {
     let format = this.conf.ouPath.startsWith('rtsp://') ? 'rtsp' : 'flv';
-    let argv = ['-fflags', 'nobuffer', '-i', this.conf.inPath, '-c', 'copy', '-f', format, this.conf.ouPath,
+    let argv = ['-re', '-fflags', 'nobuffer', '-i', this.conf.inPath, '-c', 'copy', '-f', format, this.conf.ouPath,
 		'-stimeout', '10000000 ','-reconnect', '1', '-reconnect_at_eof', '1', '-reconnect_streamed', '1', '-reconnect_delay_max', '2']
     if (this.conf.inPath[0] === '/' || this.conf.inPath[1] === ':') {
       argv.unshift('-1');
       argv.unshift('-stream_loop');
-      argv.unshift('-re');
     }
 
     if (this.conf.inPath.startsWith('rtsp://') && this.conf.rtsp_transport) {
@@ -35,8 +34,9 @@ class NodeRelaySession extends EventEmitter {
         argv.unshift('-rtsp_transport');
       }
     }
+    
+    Logger.log('[relay task] id='+this.id,'cmd=ffmpeg', argv.join(' '));
 
-    Logger.ffdebug(argv.toString());
     this.ffmpeg_exec = spawn(this.conf.ffmpeg, argv);
     this.ffmpeg_exec.on('error', (e) => {
       Logger.ffdebug(e);

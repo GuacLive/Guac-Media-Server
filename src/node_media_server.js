@@ -9,6 +9,7 @@ const NodeRtmpServer = require('./node_rtmp_server');
 const NodeHttpServer = require('./node_http_server');
 const NodeTransServer = require('./node_trans_server');
 const NodeRelayServer = require('./node_relay_server');
+const NodeFissionServer = require('./node_fission_server');
 const context = require('./node_core_ctx');
 
 class NodeMediaServer {
@@ -48,6 +49,15 @@ class NodeMediaServer {
     
     Logger.log('Overwriting uncaughtException handler - node-media-server!');
 
+    if (this.config.fission) {
+      if (this.config.cluster) {
+        Logger.log('NodeFissionServer does not work in cluster mode');
+      } else {
+        this.nfs = new NodeFissionServer(this.config);
+        this.nfs.run();
+      }
+    }
+
     process.on('uncaughtException', function (err) {
       Logger.error('uncaughtException', err);
     });
@@ -85,4 +95,4 @@ class NodeMediaServer {
   }
 }
 
-module.exports = NodeMediaServer
+module.exports = NodeMediaServer;

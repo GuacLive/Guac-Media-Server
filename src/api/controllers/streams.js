@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const NodeTransServer = require("../../node_trans_server");
+const NodeTransServer = require("../../src/node_trans_server");
 
 function postStreamTrans(req, res, next) {
   let config = req.body;

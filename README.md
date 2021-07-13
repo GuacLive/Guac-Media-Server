@@ -58,21 +58,28 @@ You should check the misc/config.sample.js and misc/index.js files for usage.
 ![logo](https://www.nodemedia.cn/uploads/site_logo.png)
 
 A Node.js implementation of RTMP/HTTP-FLV/WS-FLV/HLS/DASH Media Server  
-[中文介绍](https://github.com/illuspas/Node-Media-Server/blob/master/README_CN.md)
+[中文介绍](https://github.com/illuspas/Node-Media-Server/blob/master/README_CN.md)  
+
+**If you like this project you can support me.**  
+<a href="https://www.buymeacoffee.com/illuspas" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-white.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+
+# NMSv3
+https://github.com/NodeMedia/NodeMediaServer
+
+# Web Admin Panel Source
+[https://github.com/illuspas/Node-Media-Server-Admin](https://github.com/illuspas/Node-Media-Server-Admin)
+
+# Web Admin Panel Screenshot
+[http://server_ip:8000/admin](http://server_ip:8000/admin)
 
 ![admin](https://raw.githubusercontent.com/illuspas/resources/master/img/admin_panel_dashboard.png)
 ![preview](https://raw.githubusercontent.com/illuspas/resources/master/img/admin_panel_streams_preview.png)
-
-
-**If you like this project you can support me.**  
-<a href="https://www.buymeacoffee.com/illuspas" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
 # Features
  - Cross platform support Windows/Linux/Unix
  - Support H.264/H.265(flv_id=12)/AAC/MP3/SPEEX/NELLYMOSER/G.711/OPUS(flv_id=13)
  - Support GOP cache
- - Support remux to LIVE-HTTP-FLV,Support [flv.js](https://github.com/Bilibili/flv.js) playback
- - Support remux to LIVE-WebSocket-FLV,Support [flv.js](https://github.com/Bilibili/flv.js) playback
+ - Support remux to LIVE-HTTP/WS-FLV,Support [NodePlayer.js](https://www.nodemedia.cn/product/nodeplayer-js) playback
  - Support remux to HLS/DASH/MP4
  - Support xycdn style authentication
  - Support event callback
@@ -80,14 +87,16 @@ A Node.js implementation of RTMP/HTTP-FLV/WS-FLV/HLS/DASH Media Server
  - Support Server Monitor
  - Support Rtsp/Rtmp relay
  - Support api control relay
-  
+ - Support real-time multi-resolution transcoding
+
 # Usage 
-## docker version (only_linux_x64)
+
+## npx 
 ```bash
-docker run --name nms -d -p 1935:1935 -p 8000:8000 illuspas/node-media-server
+npx node-media-server
 ```
 
-## git version
+## install as a global program
 ```bash
 mkdir nms
 cd nms
@@ -139,7 +148,7 @@ ffmpeg -re -i INPUT_FILE_NAME -c copy -f flv rtmp://localhost/live/STREAM_NAME
 
 Or if you have a video file that is encoded in other audio/video format:
 ```bash
-ffmpeg -re -i INPUT_FILE_NAME -c:v libx264 -preset superfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/STREAM_NAME
+ffmpeg -re -i INPUT_FILE_NAME -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/STREAM_NAME
 ```
 
 ## From OBS
@@ -705,6 +714,63 @@ relay: {
 }
 ```
 
+# Fission
+Real-time transcoding multi-resolution output
+![fission](https://raw.githubusercontent.com/illuspas/resources/master/img/admin_panel_fission.png)
+```
+fission: {
+  ffmpeg: '/usr/local/bin/ffmpeg',
+  tasks: [
+    {
+      rule: "game/*",
+      model: [
+        {
+          ab: "128k",
+          vb: "1500k",
+          vs: "1280x720",
+          vf: "30",
+        },
+        {
+          ab: "96k",
+          vb: "1000k",
+          vs: "854x480",
+          vf: "24",
+        },
+        {
+          ab: "96k",
+          vb: "600k",
+          vs: "640x360",
+          vf: "20",
+        },
+      ]
+    },
+    {
+      rule: "show/*",
+      model: [
+        {
+          ab: "128k",
+          vb: "1500k",
+          vs: "720x1280",
+          vf: "30",
+        },
+        {
+          ab: "96k",
+          vb: "1000k",
+          vs: "480x854",
+          vf: "24",
+        },
+        {
+          ab: "64k",
+          vb: "600k",
+          vs: "360x640",
+          vf: "20",
+        },
+      ]
+    },
+  ]
+}
+```
+
 # Publisher and Player App/SDK
 
 ## Android Livestream App
@@ -721,7 +787,7 @@ https://github.com/NodeMedia/NodeMediaClient-iOS
 https://github.com/NodeMedia/react-native-nodemediaclient
 
 ## NodePlayer.js HTML5 live player
-* Implemented with asm.js
+* Implemented with asm.js / wasm
 * http-flv/ws-flv
 * H.264/H.265 + AAC/Nellymoser/G.711 decoder
 * Ultra low latency (Support for iOS safari browser)
@@ -738,5 +804,6 @@ http://www.nodemedia.cn/products/node-media-player
 http://www.nodemedia.cn/products/node-media-client/win
 
 # Thanks
-strive, 树根, 疯狂的台灯, 枫叶, lzq, 番茄, smicroz , 熊科辉, Ken Lee , Erik Herz, Javier Gomez, trustfarm, leeoxiang, Aaron Turner， Anonymous  
+Sorng Sothearith, standifer1023, floatflower, Christopher Thomas, strive, jaysonF, 匿名, 李勇, 巴草根, ZQL, 陈勇至, -Y, 高山流水, 老郭, 孙建, 不说本可以, Jacky, 人走茶凉，树根, 疯狂的台灯, 枫叶, lzq, 番茄, smicroz , kasra.shahram, 熊科辉, Ken Lee , Erik Herz, Javier Gomez, trustfarm, leeoxiang, Aaron Turner， Anonymous  
+
 Thank you for your support.
