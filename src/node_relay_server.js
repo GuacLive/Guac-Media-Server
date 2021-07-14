@@ -187,7 +187,7 @@ class NodeRelayServer {
   }
 
   onDonePlay(id, streamPath, args) {
-    let list = this.dynamicSessions.get(id);
+    let list = Array.from(this.dynamicSessions, ([name, value]) => value ).find((session)=>{return session.conf.name === streamPath.split('/')[2]});
     let publisher = context.sessions.get(context.publishers.get(streamPath));
     if (list && publisher.players.size == 0) {
       list.slice().forEach(session => session.end());
