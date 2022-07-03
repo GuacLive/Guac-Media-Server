@@ -43,7 +43,7 @@ You should check the misc/config.sample.js and misc/index.js files for usage.
 
 ## Used by the following services
 
-- [GuacLive](https://guac.live)
+- [Guac](https://guac.tv)
 
 ---
 
