@@ -1,11 +1,11 @@
 {
   "name": "guac-media-server",
-  "version": "2.3.9",
+  "version": "2.3.12",
   "description": "A Node.js implementation of RTMP Server",
   "main": "misc/index.js",
   "scripts": {
     "start": "node misc/index.js",
-    "test": "node app.js"
+    "test": "node test/test_run.js"
   },
   "repository": {
     "type": "git",
