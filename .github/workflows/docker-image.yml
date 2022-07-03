@@ -30,4 +30,4 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: illuspas/node-media-server:latest, illuspas/node-media-server:${{steps.tag.outputs.tag}}
+        tags: guaclive/guac-media-server:latest, guaclive/guac-media-server:${{steps.tag.outputs.tag}}
