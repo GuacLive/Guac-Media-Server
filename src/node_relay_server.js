@@ -36,6 +36,7 @@ class NodeRelayServer {
       Logger.error('Download the latest ffmpeg static program:', getFFmpegUrl());
       return;
     }
+    context.nodeEvent.on('relayTask', this.onRelayTask.bind(this));
     context.nodeEvent.on('relayPull', this.onRelayPull.bind(this));
     context.nodeEvent.on('relayPush', this.onRelayPush.bind(this));
     context.nodeEvent.on('relayDelete', this.onRelayDelete.bind(this));
@@ -70,6 +71,7 @@ class NodeRelayServer {
         session.id = i;
         session.streamPath = `/${conf.app}/${conf.name}`;
         session.on('end', (id) => {
+          context.sessions.delete(id);
           this.staticSessions.delete(id);
         });
         this.staticSessions.set(i, session);
@@ -79,11 +81,32 @@ class NodeRelayServer {
     }
   }
 
+  onRelayTask(path, url) {
+    let conf = {};
+    conf.ffmpeg = this.config.relay.ffmpeg;
+    conf.app = '-';
+    conf.name = '-';
+    conf.inPath = path;
+    conf.ouPath = url;
+    let session = new NodeRelaySession(conf);
+    const id = session.id;
+    context.sessions.set(id, session);
+    session.on('end', (id) => {
+      context.sessions.delete(id);
+      this.dynamicSessions.delete(id);
+    });
+    this.dynamicSessions.set(id, session);
+    session.run();
+    Logger.log('[relay dynamic task] start id=' + id, conf.inPath, 'to', conf.ouPath);
+    return id;
+  }
+
   //从远端拉推到本地
   onRelayPull(url, app, name) {
     let conf = {};
     conf.app = app;
     conf.name = name;
+    conf.mode = 'pull';
     conf.ffmpeg = this.config.relay.ffmpeg;
     conf.inPath = url;
     conf.ouPath = `rtmp://127.0.0.1:${this.config.rtmp.port}/${app}/${name}`;
@@ -91,6 +114,7 @@ class NodeRelayServer {
     const id = session.id;
     context.sessions.set(id, session);
     session.on('end', (id) => {
+      context.sessions.delete(id);
       let list = this.dynamicSessions.get(id);
       if (list.indexOf(session) > -1) {
         list.splice(list.indexOf(session), 1);
@@ -113,6 +137,7 @@ class NodeRelayServer {
     let conf = {};
     conf.app = app;
     conf.name = name;
+    conf.mode = 'push';
     conf.ffmpeg = this.config.relay.ffmpeg;
     conf.inPath = `rtmp://127.0.0.1:${this.config.rtmp.port}/${app}/${name}`;
     conf.ouPath = url;
@@ -120,6 +145,7 @@ class NodeRelayServer {
     const id = session.id;
     context.sessions.set(id, session);
     session.on('end', (id) => {
+      context.sessions.delete(id);
       let list = this.dynamicSessions.get(id);
       if (list.indexOf(session) > -1) {
         list.splice(list.indexOf(session), 1);

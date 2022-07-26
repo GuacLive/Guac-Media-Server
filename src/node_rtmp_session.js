@@ -149,11 +149,6 @@ class NodeRtmpSession {
     this.videoCount = 0;
     this.videoLevel = 0;
     this.bitrate = 0;
-
-    this.gopCacheEnable = config.rtmp.gop_cache;
-    this.rtmpGopCacheQueue = null;
-    this.flvGopCacheQueue = null;
-
     this.ackSize = 0;
     this.inAckSize = 0;
     this.inLastAck = 0;
@@ -172,6 +167,10 @@ class NodeRtmpSession {
     this.players = new Set();
     this.numPlayCache = 0;
     this.bitrateCache = {};
+
+    this.rtmpGopCacheQueue = config.rtmp.gop_cache ? new Set() : null;
+    this.flvGopCacheQueue = config.rtmp.gop_cache ? new Set() : null;
+
     context.sessions.set(this.id, this);
     
     this.totalBytes = 0;
@@ -664,10 +663,8 @@ class NodeRtmpSession {
 
       if (sound_format != 10 && sound_format != 13) {
         Logger.log(
-          `[rtmp publish] Handle audio. id=${this.id} streamPath=${
-            this.publishStreamPath
-          } sound_format=${sound_format} sound_type=${sound_type} sound_size=${sound_size} sound_rate=${sound_rate} codec_name=${this.audioCodecName} ${this.audioSamplerate} ${
-            this.audioChannels
+          `[rtmp publish] Handle audio. id=${this.id} streamPath=${this.publishStreamPath
+          } sound_format=${sound_format} sound_type=${sound_type} sound_size=${sound_size} sound_rate=${sound_rate} codec_name=${this.audioCodecName} ${this.audioSamplerate} ${this.audioChannels
           }ch`
         );
       }
@@ -678,7 +675,7 @@ class NodeRtmpSession {
       this.isFirstAudioReceived = true;
       this.aacSequenceHeader = Buffer.alloc(payload.length);
       payload.copy(this.aacSequenceHeader);
-      if(sound_format == 10) {
+      if (sound_format == 10) {
         let info = AV.readAACSpecificConfig(this.aacSequenceHeader);
         this.audioProfileName = AV.getAACProfileName(info);
         this.audioSamplerate = info.sample_rate;
@@ -689,10 +686,8 @@ class NodeRtmpSession {
       }
 
       Logger.log(
-        `[rtmp publish] Handle audio. id=${this.id} streamPath=${
-          this.publishStreamPath
-        } sound_format=${sound_format} sound_type=${sound_type} sound_size=${sound_size} sound_rate=${sound_rate} codec_name=${this.audioCodecName} ${this.audioSamplerate} ${
-          this.audioChannels
+        `[rtmp publish] Handle audio. id=${this.id} streamPath=${this.publishStreamPath
+        } sound_format=${sound_format} sound_type=${sound_type} sound_size=${sound_size} sound_rate=${sound_rate} codec_name=${this.audioCodecName} ${this.audioSamplerate} ${this.audioChannels
         }ch`
       );
     }
@@ -756,10 +751,10 @@ class NodeRtmpSession {
     let payload = this.parserPacket.payload.slice(0, length);
     let frame_type = (payload[0] >> 4) & 0x0f;
     let codec_id = payload[0] & 0x0f;
-    
-    if(this.videoFps === 0) {
-      if(this.videoCount++ === 0) {
-        setTimeout(()=>{
+
+    if (this.videoFps === 0) {
+      if (this.videoCount++ === 0) {
+        setTimeout(() => {
           this.videoFps = Math.ceil(this.videoCount / 5);
         }, 5000);
       }
@@ -775,8 +770,6 @@ class NodeRtmpSession {
         this.videoHeight = info.height;
         this.videoProfileName = AV.getAVCProfileName(info);
         this.videoLevel = info.level;
-        this.rtmpGopCacheQueue = this.gopCacheEnable ? new Set() : null;
-        this.flvGopCacheQueue = this.gopCacheEnable ? new Set() : null;
         //Logger.log(`[rtmp publish] avc sequence header`,this.avcSequenceHeader);
       }
     }
@@ -785,8 +778,7 @@ class NodeRtmpSession {
       this.videoCodec = codec_id;
       this.videoCodecName = VIDEO_CODEC_NAME[codec_id];
       Logger.log(
-        `[rtmp publish] Handle video. id=${this.id} streamPath=${this.publishStreamPath} frame_type=${frame_type} codec_id=${codec_id} codec_name=${this.videoCodecName} ${
-          this.videoWidth
+        `[rtmp publish] Handle video. id=${this.id} streamPath=${this.publishStreamPath} frame_type=${frame_type} codec_id=${codec_id} codec_name=${this.videoCodecName} ${this.videoWidth
         }x${this.videoHeight}`
       );
     }
@@ -806,12 +798,12 @@ class NodeRtmpSession {
     context.nodeEvent.emit('video', this.id, {payload, timestamp, length});
 
     //cache gop
-    if ((codec_id == 7 || codec_id == 12) && this.rtmpGopCacheQueue != null) {
-      if (frame_type == 1 && payload[1] == 1) {
+    if (this.rtmpGopCacheQueue != null) {
+      if (frame_type == 1) {
         this.rtmpGopCacheQueue.clear();
         this.flvGopCacheQueue.clear();
       }
-      if (frame_type == 1 && payload[1] == 0) {
+      if ((codec_id == 7 || codec_id == 12) && frame_type == 1 && payload[1] == 0) {
         //skip avc sequence header
       } else {
         this.rtmpGopCacheQueue.add(rtmpChunks);
