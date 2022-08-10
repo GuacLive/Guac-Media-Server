@@ -30,6 +30,7 @@ const config = {
     mediaroot: path.resolve(__dirname+'/../media'),
     recroot: path.resolve(__dirname+'/../rec'),
   },
+  websocket: false,
   misc: {
     api_endpoint: conf.endpoint,
     api_secret: conf.api_secret,
