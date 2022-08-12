@@ -4,7 +4,15 @@
 //  Copyright (c) 2019 Nodemedia. All rights reserved.
 //
 const { get, set } = require('lodash');
+const Express = require('express');
+const { once } = require('events');
 
+/**
+ * get all relay tasks
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {*} next 
+ */
 function getStreams(req, res, next) {
   let stats = {};
   this.sessions.forEach(function (session, id) {
@@ -26,13 +34,19 @@ function getStreams(req, res, next) {
       path: session.conf.inPath,
       url: session.conf.ouPath,
       mode: session.conf.mode,
+      ts: session.ts,
       id: id,
     });
   });
-
   res.json(stats);
 }
 
+/**
+ * get relay task by id
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {*} next 
+ */
 function getStreamByID(req, res, next) {
   const relaySession = Array.from(this.sessions.values()).filter(
     (session) =>
@@ -45,11 +59,18 @@ function getStreamByID(req, res, next) {
     path: item.conf.inPath,
     url: item.conf.ouPath,
     mode: item.conf.mode,
+    ts: item.ts,
     id: item.id,
   }));
   res.json(relays);
 }
 
+/**
+ * get relay task by name
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {*} next 
+ */
 function getStreamByName(req, res, next) {
   const relaySession = Array.from(this.sessions.values()).filter(
     (session) =>
@@ -62,53 +83,84 @@ function getStreamByName(req, res, next) {
     name: item.conf.name,
     url: item.conf.ouPath,
     mode: item.conf.mode,
+    ts: item.ts,
     id: item.id,
   }));
   res.json(relays);
 }
 
-function relayStream(req, res, next) {
+/**
+ * create relay url to url task
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {*} next 
+ */
+async function relayStream(req, res, next) {
   let path = req.body.path;
   let url = req.body.url;
   if (path && url) {
-    this.nodeEvent.emit('relayTask', path, url);
-    res.sendStatus(200);
+    process.nextTick(() => this.nodeEvent.emit('relayTask', path, url));
+    let ret = await once(this.nodeEvent, 'relayTaskDone');
+    res.send(ret[0]);
   } else {
     res.sendStatus(400);
   }
 }
 
-function pullStream(req, res, next) {
+
+/**
+ * create relay pull task
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {*} next 
+ */
+async function pullStream(req, res, next) {
+  let url = req.body.url;
+  let app = req.body.app;
+  let name = req.body.name;
+  let rtsp_transport = req.body.rtsp_transport ? req.body.rtsp_transport : null;
+  if (url && app && name) {
+    process.nextTick(() => this.nodeEvent.emit('relayPull', url, app, name, rtsp_transport));
+    let ret = await once(this.nodeEvent, 'relayPullDone');
+    res.send(ret[0]);
+
+  } else {
+    res.sendStatus(400);
+  }
+}
+
+/**
+ * create relay push task
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {*} next 
+ */
+async function pushStream(req, res, next) {
   let url = req.body.url;
   let app = req.body.app;
   let name = req.body.name;
   if (url && app && name) {
-    this.nodeEvent.emit('relayPull', url, app, name);
-    res.sendStatus(200);
+    process.nextTick(() => this.nodeEvent.emit('relayPush', url, app, name));
+    let ret = await once(this.nodeEvent, 'relayPushDone');
+    res.send(ret[0]);
   } else {
     res.sendStatus(400);
   }
 }
 
-function pushStream(req, res, next) {
-  let url = req.body.url;
-  let app = req.body.app;
-  let name = req.body.name;
-  if (url && app && name) {
-    this.nodeEvent.emit('relayPush', url, app, name);
-    res.sendStatus(200);
-  } else {
-    res.sendStatus(400);
-  }
-}
-
+/**
+ * delete relay task
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {*} next 
+ */
 function delStream(req, res, next) {
   let relaySession = this.sessions.get(req.params.id);
   if (relaySession) {
     relaySession.end();
-    res.json('Ok');
+    res.sendStatus(200);
   } else {
-    res.json({ error: 'relay not found' }, 404);
+    res.sendStatus(404);
   }
 }
 

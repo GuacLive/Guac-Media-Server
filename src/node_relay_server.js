@@ -98,17 +98,20 @@ class NodeRelayServer {
     this.dynamicSessions.set(id, session);
     session.run();
     Logger.log('[relay dynamic task] start id=' + id, conf.inPath, 'to', conf.ouPath);
-    return id;
+    context.nodeEvent.emit("relayTaskDone", id);
   }
 
   //从远端拉推到本地
-  onRelayPull(url, app, name) {
+  onRelayPull(url, app, name, rtsp_transport) {
     let conf = {};
     conf.app = app;
     conf.name = name;
     conf.mode = 'pull';
     conf.ffmpeg = this.config.relay.ffmpeg;
     conf.inPath = url;
+    if (rtsp_transport){
+      conf.rtsp_transport = rtsp_transport
+    }
     conf.ouPath = `rtmp://127.0.0.1:${this.config.rtmp.port}/${app}/${name}`;
     let session = new NodeRelaySession(conf);
     const id = session.id;
@@ -129,7 +132,8 @@ class NodeRelayServer {
     this.dynamicSessions.get(id).push(session);
     session.run();
     Logger.log('[relay dynamic pull] start id=' + id, conf.inPath, 'to', conf.ouPath);
-    return id;
+    context.nodeEvent.emit("relayPullDone", id);
+    
   }
 
   //从本地拉推到远端
@@ -160,6 +164,7 @@ class NodeRelayServer {
     this.dynamicSessions.get(id).push(session);
     session.run();
     Logger.log('[relay dynamic push] start id=' + id, conf.inPath, 'to', conf.ouPath);
+    context.nodeEvent.emit("relayPushDone", id);
   }
 
   onRelayDelete(id) {

@@ -302,8 +302,9 @@ const config = {
 > The 'sign' keyword can not be modified
 
 # H.265 over RTMP
-Play:[NodeMediaClient-Android](#android) and [NodeMediaClient-iOS](#ios)  
-Pure JavaScrip live stream player: [NodePlayer.js](https://github.com/illuspas/NodePlayer.js)
+- Play:[NodeMediaClient-Android](#android) and [NodeMediaClient-iOS](#ios)  
+- Commercial Pure JavaScrip live stream player: [NodePlayer.js](https://www.nodemedia.cn/product/nodeplayer-js)
+- OpenSource Pure JavaScrip live stream player: [pro-flv.js](https://github.com/illuspas/pro-fiv.js)
 
 # VP8 VP9 OPUS over RTMP
 [Extension ffmpeg](https://github.com/NodeMedia/ffmpeg)
@@ -560,6 +561,7 @@ const config = {
         app: 'live',
         hls: true,
         hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
+        hlsKeep: true, // to prevent file delete after end the stream
         dash: true,
         dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
       }

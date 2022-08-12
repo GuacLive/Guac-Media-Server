@@ -15,11 +15,19 @@ const fs = require('fs');
 
 const { extractProgress } = require('../misc/utils/helpers');
 
+const isHlsFile = (filename) => filename.endsWith('.ts') || filename.endsWith('.m3u8')
+const isTempFiles = (filename) => filename.endsWith('.mpd') || filename.endsWith('.m4s') || filename.endsWith('.tmp')
 class NodeTransSession extends EventEmitter {
   constructor(conf) {
     super();
     this.conf = conf;
     this.data = {};
+    this.getConfig = (key = null) => {
+      if (!key) return
+      if (typeof this.conf != 'object') return
+      if (this.conf.args && typeof this.conf.args === 'object' && this.conf.args[key]) return this.conf.args[key]
+      return this.conf[key]
+    }
   }
 
   run() {
@@ -115,33 +123,45 @@ class NodeTransSession extends EventEmitter {
         return;
       }
 
-      fs.readdir(ouPath, function (err, files) {
-        if (!err) {
-          files.forEach((filename) => {
-            if (filename.endsWith('.ts') ||
-            filename.endsWith('.m3u8') ||
-            filename.endsWith('.mpd') ||
-            filename.endsWith('.m4s') ||
-            filename.endsWith('.flv') ||
-            filename.endsWith('.png') ||
-            filename.endsWith('.tmp')) {
-              try {
-                fs.unlinkSync(ouPath + '/' + filename);
-              } catch (e) {}
-            }
-          })
-        }
-      });
-      if (this.conf.hls) {
-        try {
-          fs.writeFileSync(ouPath + '/' + this.hlsFileName, '#EXTM3U\n');
-        } catch(e) {}
-      }
+    
+      this.cleanTempFiles(ouPath);
+      this.deleteHlsFiles(ouPath);
+      this.createEmptyHlsFile(ouPath);
     });
   }
 
   end() {
     this.ffmpeg_exec.stdin.write('q');
+  }
+
+  // delete hls files
+  deleteHlsFiles (ouPath) {
+    if ((!ouPath && !this.conf.hls) || this.getConfig('hlsKeep')) return
+    fs.readdir(ouPath, function (err, files) {
+      if (err) return
+      files.filter((filename) => isHlsFile(filename)).forEach((filename) => {
+        fs.unlinkSync(`${ouPath}/${filename}`);
+      });
+    });
+  }
+
+  // delete the other files
+  cleanTempFiles (ouPath) {
+    if (!ouPath) return
+    fs.readdir(ouPath, function (err, files) {
+      if (err) return
+      files.filter((filename) => isTempFiles(filename)).forEach((filename) => {
+        fs.unlinkSync(`${ouPath}/${filename}`);
+      });
+    });
+  }
+
+  // create an empty hls file
+  createEmptyHlsFile (ouPath) {
+    if (!ouPath) return
+    try {
+      fs.writeFileSync(ouPath + '/' + this.hlsFileName, '#EXTM3U\n');
+    } catch(e) {}
   }
 }
 module.exports = NodeTransSession;
